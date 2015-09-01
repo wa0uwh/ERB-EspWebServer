@@ -70,7 +70,7 @@ extern "C" {
 // Note: By my convention, All Global Variables and Constants start with a letter "g".
 
 
-const char *gRev = "ERB_MB";  // Software Revision Code
+const char *gRev = "ERB_MC";  // Software Revision Code
 
 
 String gSsid = "........";     // Change to your SSID

@@ -119,12 +119,12 @@ infoPage()
         sz += sendComment_P( COPYRIGHT2 );
         sz += sendComment_P( COPYRIGHT3 );
 
-        // 5 Groups of 10Kb = 50Kb 
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        // 5 Groups of 10Kb = 50Kb 
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
 
 //        // 5 Groups of 10Kb = 50Kb 
 //        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
