@@ -161,7 +161,7 @@ htmlPageTitle( String aNodeName, String aTitle )
     sz += wprintln( String(aNodeName) );
     sz += wprintln( F(" - ") );
     sz += wprintln( String(aTitle) );
-    sz += wprintln( F("<br><font size='2'>ERB's Esp8266 Web Server</font>") );
+    sz += wprintln( F("<br><font size='2'>ERB's Esp8266 Experimental Web Server</font>") );
     sz += wprintln( F("</h1></center>") );
     return sz;
 }
