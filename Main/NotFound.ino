@@ -26,13 +26,15 @@ handleNotFound()
     long sz = 0;
     gSentSize = 0;
     
+    PAGE_MONITOR_REPORT_START;
+    
     digitalWrite ( gGrnLED, ON );
       gHits++;
       
       // HTTP Header
-      wprintln( F("HTTP/1.1 404") );
-      wprintln( F("Content-Type: text/html") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 404") );
+      sz += wprintln( F("Content-Type: text/html") );
+      sz += wprintln( ); // A Blank Line
       
       sz += wprintln(  F("404 File Not Found") );
       sz += wprintln(  F("<br>") );
@@ -53,9 +55,9 @@ handleNotFound()
       
       sz += wprint( "", true ); // Final Packet
 
-      long pageLength = sz;
-     
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_END;
+      
+      PAGE_MONITOR_REPORT_TOTAL;
       
     digitalWrite ( gGrnLED, OFF );
     

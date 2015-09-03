@@ -40,6 +40,8 @@ initHandlers()
     gServer.on ( "/inst3.svg",     handleInst );
     
     gServer.on ( "/bar.svg",       handleBar );
+    gServer.on ( "/sliderbar",     handleSliderBar );
+    gServer.on ( "/visitormap",    handleVisitorMap );
     
     // Verbose Option, Hidden from HELP
     gServer.on ( "/on/vismap",      []() { gHits++; gVisitorMapState = true;  pageDirector();} );

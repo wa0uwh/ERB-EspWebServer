@@ -23,7 +23,7 @@ instGauge( int w = 200, int h = 200)
 {
     long sz = 0;
     
-    Serial.println ( sF("\nStart Instrument Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
     
     int startingFreeHeap = ESP.getFreeHeap();
     
@@ -271,7 +271,7 @@ instGauge( int w = 200, int h = 200)
     
     sz += wprintln(  F("</svg>") );
     
-    Serial.println ( F(" . . Finshed Instrument Build") );
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }
@@ -286,21 +286,21 @@ void
 ICACHE_FLASH_ATTR
 handleInst()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );
       gHits++;
       
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: image/svg+xml") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: image/svg+xml") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += instGauge(200, 200); // Create SVG Image
+      sz += instGauge(200, 200); // Create SVG Image
       
-      pageLength += wprintln( "", true ); // Final Packet
+      sz += wprintln( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
       
     digitalWrite ( gBluLED, OFF );
     yield();

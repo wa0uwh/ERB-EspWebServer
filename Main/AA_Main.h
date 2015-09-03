@@ -47,11 +47,18 @@
     
     #define FreeHeapScaleLo (4000)
     #define FreeHeapScaleHi (20000)
+    
+    #define PAGE_MONITOR_REPORT_START Serial.println ( sF("\nStart ") + String( __func__ )\
+            + F(" Build for: ")\
+            + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") )
 
-    #define PAGE_MONITOR_REPORT Serial.println( sF("Sent: ") + String(__func__)\
+    #define PAGE_MONITOR_REPORT_END Serial.println ( sF("  . . Finshed ") + String( __func__ )\
+            + F(" Build") )
+
+    #define PAGE_MONITOR_REPORT_TOTAL Serial.println( sF("Sent: ") + String(__func__)\
             + F(", URI: ") + gServer.uri()\
-            + F(", FreeHeap: ") + String(ESP.getFreeHeap() / 1000.0, 3)\
-            + F(", PageSize: ") + String(pageLength)\
+            + F(", FreeHeap: ") + String( ESP.getFreeHeap() / 1000.0, 3 )\
+            + F(", PageSize: ") + String( sz / 1000.0, 3 )\
             + F(", Hits: ") + String(gHits) )
     
     #define COPYRIGHT1 PSTR("\

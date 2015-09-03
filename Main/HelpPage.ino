@@ -24,7 +24,7 @@ helpPage(int aAutoRefresh )
 {
     long sz = 0;
     
-    Serial.println ( sF("\nStart /help Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
  
     // Generate Html Header
     sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/help") );
@@ -68,6 +68,8 @@ helpPage(int aAutoRefresh )
     sz += wprintln(  F("   <a href='/clock.svg'   >URL/clock.svg</a>     = Just The Test Clock Graphic") );
     sz += wprintln(  F("   <a href='/inst.svg'    >URL/inst.svg</a>      = Just The Test Inst Graphic") );
     sz += wprintln(  F("   <a href='/bar.svg'     >URL/bar.svg</a>       = Just The Test Bar Graphic, Note: This is not Actually an SVG") );
+    sz += wprintln(  F("   <a href='/sliderbar'   >URL/sliderbar</a>     = Just The Test SliderBar Graphic") );
+    sz += wprintln(  F("   <a href='/visitormap'  >URL/visitormap</a>    = Just The Test VisitorMap Graphic") );
     sz += wprintln(  F("</ul>") );
     
     // Modes
@@ -106,13 +108,13 @@ helpPage(int aAutoRefresh )
     sz += wprintln( sF("   <a href='/q/epoch'     >URL/q/epoch</a>       = Epoch (Unix Time): <b>") + String(epoch()) + F("</b>") );
     sz += wprintln( sF("   <a href='/q/loadavg'   >URL/q/loadavg</a>     = Load Avg (Pseudo): <b>") + String(gLoadAvgS) + F("</b>") );
     sz += wprintln( sF("   <a href='/q/battvolt'  >URL/q/battvolt</a>    = Battery Voltage:   <b>") + String(readvdd33()/1000.0, 2) + F("V</b>") );
-    sz += wprintln( sF("   <a href='/q/freeheap'  >URL/q/freeheap</a>    = Free Heap Size:    <b>") + String(ESP.getFreeHeap() / 1000.0, 3) + F("Kb</b>") );
+    sz += wprintln( sF("   <a href='/q/freeheap'  >URL/q/freeheap</a>    = Free Heap Size:    <b>") + String(ESP.getFreeHeap() / 1000.0, 3) + F("KB</b>") );
     sz += wprintln( sF("   <a href='/q/hits'      >URL/q/hits</a>        = Hit Counter:       <b>") + String(gHits) + F("</b>") );
     
     sz += wprintln( sF("   <a href='/q/id'        >URL/q/id</a>          = Unit ID:           <b>") + String(ESP.getChipId() / 10000.0, 4) + F("</b>") );
     sz += wprintln( sF("   <a href='/q/idx'       >URL/q/idx</a>         = Unit ID Hex:       <b>") + String(id2hex(ESP.getChipId())) + F("</b>") );
     sz += wprintln( sF("   <a href='/q/flashid'   >URL/q/flashid</a>     = Flash ID:          <b>") + String(ESP.getFlashChipId() / 10000.0, 4) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/flashsize' >URL/q/flashsize</a>   = Flash Size:        <b>") + String(ESP.getFlashChipSize() / 1000.0, 1) + F("Kb</b>") );
+    sz += wprintln( sF("   <a href='/q/flashsize' >URL/q/flashsize</a>   = Flash Size:        <b>") + String(ESP.getFlashChipSize() / 1000.0, 1) + F("KB</b>") );
     sz += wprintln( sF("   <a href='/q/flashspd'  >URL/q/flashspd</a>    = Flash Speed:       <b>") + String(ESP.getFlashChipSpeed() / 1000000.0, 1) + F("MHz</b>") );
     
     sz += wprintln( sF("   <a href='/q/rev'       >URL/q/rev</a>         = Software Revision: <b>") + String(gRev) + F("</b>") );
@@ -152,7 +154,7 @@ helpPage(int aAutoRefresh )
     // Generate Html Footer
     sz += htmlPageFooter();
     
-    Serial.println ( F(" . . Finshed /help Build") );
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
    
@@ -169,7 +171,7 @@ void
 ICACHE_FLASH_ATTR
 handleHelpPage()
 {
-    int pageLength = 0;
+    int sz = 0;
     gSentSize = 0;
   
     gCurrentPage = HELPPAGE;
@@ -178,15 +180,15 @@ handleHelpPage()
       gHits++;
       
       // HTTP Header
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: text/html") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: text/html") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += helpPage ( (gAutoHelp ? 60 : -1) );
+      sz += helpPage ( (gAutoHelp ? 60 : -1) );
       
-      pageLength += wprint( "", true ); // Final Packet
+      sz += wprint( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
   
     digitalWrite ( gGrnLED, OFF );
     yield();

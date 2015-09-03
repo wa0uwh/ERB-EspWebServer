@@ -24,7 +24,7 @@ adminPage( int aAutoRefresh = -1 )
 {
     long sz = 0;
 
-    Serial.println ( sF("\nStart /admin Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
     
     // Generate Html Header
     sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/admin") );
@@ -86,7 +86,7 @@ adminPage( int aAutoRefresh = -1 )
     // Generate Html Footer
     sz += htmlPageFooter();
     
-    Serial.println ( F(" . . Finshed /admin Build") );
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
  
@@ -103,7 +103,7 @@ void
 ICACHE_FLASH_ATTR
 handleAdminPage()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     gCurrentPage = ADMINPAGE;
@@ -113,15 +113,15 @@ handleAdminPage()
       gHits++;
       
       // HTTP Header
-      wprintln(  F("HTTP/1.1 200 OK") );
-      wprintln(  F("Content-Type: text/html") );
-      wprintln( ); // A Blank Line
+      sz += wprintln(  F("HTTP/1.1 200 OK") );
+      sz += wprintln(  F("Content-Type: text/html") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += adminPage ( (gAutoAdmin ? 30 : -1) );
+      sz += adminPage ( (gAutoAdmin ? 30 : -1) );
     
-      pageLength += wprint( "", true ); // Final Packet
+      sz += wprint( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
       
     digitalWrite ( gGrnLED, OFF );
     yield();

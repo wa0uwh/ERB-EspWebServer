@@ -24,7 +24,7 @@ scanWifi()
 {
     long sz = 0;
     
-    Serial.println ( F("WiFi Scan Started") );
+    PAGE_MONITOR_REPORT_START;
     
     // WiFi.scanNetworks will return the number of networks found
     byte n = WiFi.scanNetworks();
@@ -67,7 +67,7 @@ scanWifi()
       sz += wprintln(  F(" </ul>") );
     }
    
-    Serial.println ( F("Wifi Scan Done") );
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }

@@ -24,7 +24,7 @@ clockGauge(int w = 200, int h = 200)
 {
     long sz = 0;
 
-    Serial.println ( sF("\nStart Clock Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
     
     sz += wprintln( );
     sz += wprintln( F("<!-- Dial Graphic Image -->") );
@@ -255,8 +255,7 @@ clockGauge(int w = 200, int h = 200)
     
     sz += wprintln( F("</svg>"));
     
-    Serial.println( F(" . . Finshed Clock Build") );
-    yield();
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }
@@ -271,21 +270,21 @@ void
 ICACHE_FLASH_ATTR
 handleClock() 
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );
       gHits++;
       
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: image/svg+xml") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: image/svg+xml") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += clockGauge( 200, 200 );
+      sz += clockGauge( 200, 200 );
       
-      pageLength += wprint( "", true); // Final Packet
+      sz += wprint( "", true); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
 
     digitalWrite ( gBluLED, OFF );
     yield();

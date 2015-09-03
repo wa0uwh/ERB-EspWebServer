@@ -23,8 +23,8 @@ ICACHE_FLASH_ATTR
 homePage(int aAutoRefresh )
 {
     long sz = 0;
-    
-    Serial.println ( sF("\nStart /home Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+
+    PAGE_MONITOR_REPORT_START;
     
     // Generate Html Header
     sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/home") );
@@ -45,7 +45,7 @@ homePage(int aAutoRefresh )
     // Navigator
     sz += navigator();
     
-    // Verbose Option
+    // Options
     sz += wprintln( );
     sz += wprintln( F("<!-- Options -->") );
     if (gAutoHome)
@@ -53,7 +53,27 @@ homePage(int aAutoRefresh )
     else sz += wprint  ( F(" | <a href='/home/auto_on'>AutoUpdate</a>") );
     sz += wprint  ( F(" | <a href='/t/v'>Verbose</a>") );
     sz += wprintln( F(" |") );
-    sz += wprintln( F("<br><br>") );
+    sz += wprintln( F("<br>") );
+
+    // SliderBar Graphic
+    if (aAutoRefresh >= 0 ) {
+      sz += wprintln( );
+      sz += wprintln( F("<!-- SliderBar1 -->") );
+      sz += wprintln( F("Page Update") );
+      sz += wprintln( F("<br>") );
+      sz += sliderBar( F("IdAutoHome1"), F("Interval:"), 0, 120, 10, 60, F("Sec") );
+      sz += wprintln( F("<br>") );
+      
+      sz += wprintln( F("<br>") );
+      sz += wprintln( );
+      sz += wprintln( F("<!-- SliderBar2 -->") );
+      sz += wprintln( F("Decoder") );
+      sz += wprintln( F("<br>") );
+      sz += sliderBar( F("IdData2"), F("Percent:"), 10, 90, 1, 50, F("%") );
+    }
+    sz += wprintln( F("<br>") );
+
+
    
     sz += wprintln( );
     sz += wprintln(  F("<!-- Page Report -->") );
@@ -78,7 +98,7 @@ homePage(int aAutoRefresh )
 //    sz += wprintln( "<input Type=\"BUTTON\" Value=\"Off\" Onclick=\"window.location.href='/'\">\r\n";
 //    sz += wprintln( "</form>\r\n";
 
-
+    
     // SVG_Line Graphic
     {
       sz += wprintln( );
@@ -130,7 +150,7 @@ homePage(int aAutoRefresh )
         sz += wprintln(  F("<b>Example:") );
         sz += wprintln(  F("<a href='/freeheap.svg'>Line</a> FreeHeap Graphic") );
         sz += wprintln(  F("<br>") );
-        sz += wprintln( sF("Range: ") + String( FreeHeapScaleLo/1000 ) + F("K to ") + String( FreeHeapScaleHi/1000 ) + F("K") );
+        sz += wprintln( sF("Range: ") + String( FreeHeapScaleLo/1000 ) + F("KB to ") + String( FreeHeapScaleHi/1000 ) + F("KB") );
         sz += wprintln(  F("<br>") );
         sz += wprintln( sF("Count of Last Sample: ") + String( gFreeHeapLogIndex/1000.0, 2 ) + F("K") );
         sz += wprintln(  F("<br>") );
@@ -176,7 +196,7 @@ homePage(int aAutoRefresh )
         sz += wprintln(  F("  <ul>") );
         sz += wprintln( sF("    Uptime: <b>")          + String(upTimeStr()) + F("</b><br>") );
         sz += wprintln( sF("    Batt Voltage: <b>")    + String(readvdd33()/1000.0, 2) + F("V</b><br>") );
-        sz += wprintln( sF("    Free Heap Size: <b>")  + String(ESP.getFreeHeap() / 1000.0, 3) + F("Kb</b><br>") );
+        sz += wprintln( sF("    Free Heap Size: <b>")  + String(ESP.getFreeHeap() / 1000.0, 3) + F("KB</b><br>") );
         sz += wprintln( sF("    Hits: <b>")            + String(gHits) + F("</b><br>") );
         sz += wprintln( sF("    Unit ID: <b>")         + String(ESP.getChipId() / 10000.0, 4) + F("</b><br>") );
         sz += wprintln( sF("    My IPA: <b>")          + String(ipa2str(gServer.client().remoteIP())) + F("</b><br>") );
@@ -188,8 +208,8 @@ homePage(int aAutoRefresh )
 
     // Generate Html Footer
     sz += htmlPageFooter();
-    
-    Serial.println ( F(" . . Finshed /home Build") );
+
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
    
@@ -206,7 +226,7 @@ void
 ICACHE_FLASH_ATTR
 handleHomePage()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     gCurrentPage = HOMEPAGE;
@@ -215,15 +235,15 @@ handleHomePage()
       gHits++;
       
       // HTTP Header
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: text/html") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: text/html") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += homePage ( (gAutoHome ? 60 : -1) );
+      sz += homePage ( (gAutoHome ? 60 : -1) );
     
-      pageLength += wprint( "", true ); // Final Packet
+      sz += wprint( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
      
     digitalWrite ( gGrnLED, OFF );
     yield(); 

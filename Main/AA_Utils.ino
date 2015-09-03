@@ -184,7 +184,7 @@ htmlPageFooter()
     
     sz += wprintln( F("Created at: <b>") );
     sz += wprint  ( String ( (gSentSize / ((millis() - gPageStartTime)/1000.0)/1000.0), 1 ) );
-    sz += wprint  ( F("</b> Mb/Sec") );
+    sz += wprint  ( F("</b> MB/Sec") );
     sz += wprint  ( F(" - <b>") );
     sz += wprint  ( String ( (millis() - gPageStartTime)/1000.0, 3 ) );
     sz += wprint  ( F("</b> CPU Secs - <b>") );

@@ -72,7 +72,7 @@ infoPage()
 {
     long sz = 0;
     
-    Serial.println ( sF("\nStart /info Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_END;
 
     // Generate Html Header
     sz += htmlPageHeader( gDeviceName, -1 );
@@ -120,11 +120,11 @@ infoPage()
         sz += sendComment_P( COPYRIGHT3 );
 
         // 5 Groups of 10Kb = 50Kb 
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
 
 //        // 5 Groups of 10Kb = 50Kb 
 //        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
@@ -188,7 +188,7 @@ infoPage()
     // Generate Html Footer
     sz += htmlPageFooter();
     
-    Serial.println ( F(" . . Finshed /info Build") );
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }
@@ -205,7 +205,7 @@ void
 ICACHE_FLASH_ATTR
 handleInfoPage()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
   
     gCurrentPage = INFOPAGE;
@@ -214,15 +214,15 @@ handleInfoPage()
       gHits++;
     
       // HTTP Header
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: text/html") );
-      wprintln( );
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: text/html") );
+      sz += wprintln( );
       
-      pageLength = infoPage();
+      sz = infoPage();
    
-      pageLength += wprint( "", true); // Final Packet
+      sz += wprint( "", true); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
     
     digitalWrite ( gGrnLED, OFF );
     yield();

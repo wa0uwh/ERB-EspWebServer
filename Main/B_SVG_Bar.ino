@@ -24,7 +24,7 @@ barGraphic()
 {
     long sz = 0;
     
-    Serial.println ( sF("\nStart Bar Graph Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
         
     // HTML5 Graphic
     sz += wprintln( );
@@ -38,14 +38,17 @@ barGraphic()
       int Vdd = readvdd33();
       
       sz += wprintln( F("<br>") );
-      sz += wprint  ( String( Lo/1000.0, 1 ) + F("v <meter value='") + String( Vdd ) );
+      sz += wprintln( String( Lo/1000.0, 1 )  + F("v") );
+      sz += wprint  ( sF("<meter value='")+ String( Vdd ) );
       sz += wprint  ( sF("' min='") + String( Lo ) );
       sz += wprint  ( sF("' low='") + String( 3000) );
-      sz += wprint  ( sF("' optium='") + String( 3300) );
+      sz += wprint  ( sF("' optium='") + String(  3300 ) );
       sz += wprint  ( sF("' high='") + String( Hi ) );
       sz += wprint  ( sF("' max='") + String( Hi ) );
-      sz += wprint  ( sF("'>VDD</meter> ") + String( Hi/1000.0, 1 ) + F("v") );
-      sz += wprintln( sF("<br>VDD = ") + String(Vdd/1000.0, 2) + F("v") );
+      sz += wprintln( sF("'>VDD</meter>") );
+      sz += wprintln( String( Hi/1000.0, 1 ) + F("v") );
+      sz += wprintln(  F("<br>") );
+      sz += wprintln( sF("VDD = ") + String(Vdd/1000.0, 2) + F("v") );
     }
    
     {
@@ -56,18 +59,20 @@ barGraphic()
       int FreeHeap = ESP.getFreeHeap();
       
       sz += wprintln( F("<br>") );
-      sz += wprint  ( String( Lo/1000 ) + F("K <meter value='") + String( FreeHeap ) );
+      sz += wprintln( String( Lo/1000 ) + F("KB") );
+      sz += wprint  ( sF("<meter value='") + String( FreeHeap ) );
       sz += wprint  ( sF("' min='") + String( Lo ) );
       sz += wprint  ( sF("' low='") + String( Lo + 1000) );
       sz += wprint  ( sF("' optium='") + String( Lo + 2000) );
       sz += wprint  ( sF("' high='") + String( Hi ) );
       sz += wprint  ( sF("' max='") + String( Hi ) );
-      sz += wprint  ( sF("'>FreeMem</meter> ") + String( Hi/1000) + F("K") );
-      sz += wprintln( sF("<br>Free Memory = ") + String(FreeHeap/1000.0, 1) + F("K") );
+      sz += wprintln( sF("'>FreeMem</meter>") );
+      sz += wprintln( String( Hi/1000 ) + F("KB") );
+      sz += wprintln(  F("<br>") );
+      sz += wprintln( sF("Free Memory = ") + String(FreeHeap/1000.0, 1) + F("KB") );
     }
     
-    Serial.println ( F(" . . Finshed Bar Graph Build") );
-    yield();
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }
@@ -83,22 +88,24 @@ ICACHE_FLASH_ATTR
 handleBar()
 {
     
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );
       gHits++;
       
       // HTTP Header
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: text/html") );
-      wprintln( F("") ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: text/html") );
+      sz += wprintln( ); // A Blank Line
+            
+      sz += wprintln( F("<center>") );
+      sz = barGraphic();      
+      sz += wprintln( F("</center>") );
       
-      pageLength = barGraphic();
-      
-      pageLength += wprint( "", true ); // Final Packet
+      sz += wprint( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
 
     digitalWrite ( gBluLED, OFF );
     yield();
