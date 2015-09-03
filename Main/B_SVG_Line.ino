@@ -24,7 +24,9 @@ lineGraphic( int w = 300, int h = 100 )
 {
     long sz = 0;
     
-    Serial.println ( sF("\nStart Line Graph Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
     
     sz += wprintln(  );
     sz += wprintln(  F("<!-- Graphic -->") );
@@ -61,8 +63,7 @@ lineGraphic( int w = 300, int h = 100 )
 
     sz += wprintln(  F("</svg>") );
     
-    Serial.println ( F(" . . Finshed Line Graph Build") );
-    yield();
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }
@@ -77,22 +78,24 @@ void
 ICACHE_FLASH_ATTR
 handleLineGraph()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );
       gHits++;
       
       // HTTP Header
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: image/svg+xml") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: image/svg+xml") );
+      sz += wprintln( ); // A Blank Line
+            
+      sz += wprintln( F("<center>") );
+      sz += lineGraphic();      
+      sz += wprintln( F("</center>") );
       
-      pageLength += lineGraphic();
-      
-      pageLength += wprint( "", true ); // Final Packet
+      sz += wprint( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
       
     digitalWrite ( gBluLED, OFF );
     yield();

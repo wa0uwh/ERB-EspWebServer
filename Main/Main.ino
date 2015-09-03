@@ -48,6 +48,7 @@
      *      Implemented Data Creation Rate Per Web Page Function\
      *      Implemented a Used CPU Seconds Value for Display\
      *      Implemented a link to a Use Map Display\
+     *      Implemented Slider Bars, Currently used for Page Refresh Interval\
      */ \
  ")
 
@@ -73,7 +74,7 @@ extern "C" {
 const char *gRev = "ERB_MC";  // Software Revision Code
 
 
-String gSsid = "........";     // Change to your SSID
+String gSsid = ".....";     // Change to your SSID
 String gPasswd = "........";   // Change to your Passwd
 
 
@@ -116,10 +117,10 @@ int gVisitorMapStyle = 1;
  
 long gHits = 0;                  // Web page Hit Counter
 
-// Automatic Page Update Flags
-boolean gAutoHelp = false;
-boolean gAutoHome = true;
-boolean gAutoAdmin = false;
+// Initial Automatic Page Refresh Intervals
+int gAutoHomeRefresh = 60;
+int gAutoHelpRefresh = 180;
+int gAutoAdminRefresh = 180;
 
 
 unsigned long gNextNTPSchd = millis();

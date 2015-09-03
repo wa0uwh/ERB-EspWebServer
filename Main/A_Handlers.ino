@@ -40,6 +40,8 @@ initHandlers()
     gServer.on ( "/inst3.svg",     handleInst );
     
     gServer.on ( "/bar.svg",       handleBar );
+    gServer.on ( "/sliderbar",     handleSliderBar );
+    gServer.on ( "/visitormap",    handleVisitorMap );
     
     // Verbose Option, Hidden from HELP
     gServer.on ( "/on/vismap",      []() { gHits++; gVisitorMapState = true;  pageDirector();} );
@@ -58,12 +60,12 @@ initHandlers()
     gServer.on ( "/off/redled",    []() { gHits++; redLed(OFF);     pageDirector();} );
     
     // Auto Page Update Options
-    gServer.on ( "/home/auto_on",  []() { gHits++; gAutoHome =   true; pageDirector();} ); // Hidden from Help
-    gServer.on ( "/home/auto_off", []() { gHits++; gAutoHome =  false; pageDirector();} ); // Hidden from Help
-    gServer.on ( "/help/auto_on",  []() { gHits++; gAutoHelp =   true; pageDirector();} ); // Hidden from Help
-    gServer.on ( "/help/auto_off", []() { gHits++; gAutoHelp =  false; pageDirector();} ); // Hidden from Help
-    gServer.on ( "/admin/auto_on", []() { gHits++; gAutoAdmin =  true; pageDirector();} ); // Hidden from Help
-    gServer.on ( "/admin/auto_off",[]() { gHits++; gAutoAdmin = false; pageDirector();} ); // Hidden from Help
+    gServer.on ( "/home/auto_on",  []() { gHits++; gAutoHomeRefresh  = 60; pageDirector();} ); // Hidden from Help
+    gServer.on ( "/home/auto_off", []() { gHits++; gAutoHomeRefresh  =  0; pageDirector();} ); // Hidden from Help
+    gServer.on ( "/help/auto_on",  []() { gHits++; gAutoHelpRefresh  = 60; pageDirector();} ); // Hidden from Help
+    gServer.on ( "/help/auto_off", []() { gHits++; gAutoHelpRefresh  =  0; pageDirector();} ); // Hidden from Help
+    gServer.on ( "/admin/auto_on", []() { gHits++; gAutoAdminRefresh = 60; pageDirector();} ); // Hidden from Help
+    gServer.on ( "/admin/auto_off",[]() { gHits++; gAutoAdminRefresh =  0; pageDirector();} ); // Hidden from Help
     
     // Querys
     gServer.on ( "/q/mdns",        []() { gHits++; gServer.send ( 200, gTextPlain, String(gHits) + ": " + String(gDeviceName) + F(".local"));} );

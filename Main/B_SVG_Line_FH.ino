@@ -27,7 +27,9 @@ lineGraphicFH( int w = 400, int h = 150 )
     int Lo = FreeHeapScaleLo/100;
     int Hi = FreeHeapScaleHi/100;
     
-    Serial.println ( sF("\nStart Free Heap Line Graph Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
     
     sz += wprintln(  );
     sz += wprintln(  F("<!-- Graphic -->") );
@@ -120,8 +122,7 @@ lineGraphicFH( int w = 400, int h = 150 )
     sz += wprintln( );
     sz += wprintln(  F("</svg>"));
     
-    Serial.println ( F(" . . Finshed Free Heep Line Graph Build") );
-    yield();
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
 }
@@ -136,22 +137,24 @@ void
 ICACHE_FLASH_ATTR
 handleLineGraphFH()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
       
     digitalWrite ( gBluLED, ON );
       gHits++;
       
       // HTTP Header
-      wprintln( F("HTTP/1.1 200 OK") );
-      wprintln( F("Content-Type: image/svg+xml") );
-      wprintln( ); // A Blank Line
+      sz += wprintln( F("HTTP/1.1 200 OK") );
+      sz += wprintln( F("Content-Type: image/svg+xml") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += lineGraphicFH();
+      sz += wprintln( F("<center>") );
+      sz += lineGraphicFH();      
+      sz += wprintln( F("</center>") );
       
-      pageLength += wprint( "", true); // Final Packet
+      sz += wprint( "", true); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
 
     digitalWrite ( gBluLED, OFF );
     yield();

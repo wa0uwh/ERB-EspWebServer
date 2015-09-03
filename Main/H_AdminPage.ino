@@ -20,14 +20,21 @@
 //
 long
 ICACHE_FLASH_ATTR
-adminPage( int aAutoRefresh = -1 )
+adminPage()
 {
     long sz = 0;
 
-    Serial.println ( sF("\nStart /admin Build for: ") + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") );
+    PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
+    
+    // Parse Args
+    for ( byte i = 0; i < gServer.args(); i++ ) {
+       if (gServer.argName(i) == F("AutoAdminRefresh") ) gAutoAdminRefresh = constrain (gServer.arg(i).toInt(), 0, 300);
+    }
     
     // Generate Html Header
-    sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/admin") );
+    sz += htmlPageHeader( gDeviceName, gAutoAdminRefresh, F("/admin") );
     
     // Page Content Starts here
     
@@ -39,11 +46,21 @@ adminPage( int aAutoRefresh = -1 )
    
     // Admin's SCAN Link
     sz += wprintln( F("\r\n<!-- Options -->") );
-    if (gAutoAdmin) 
+    if (gAutoAdminRefresh > 0) 
          sz += wprint( F(" | <a href='/admin/auto_off'>ManUpdate</a>") );
     else sz += wprint( F(" | <a href='/admin/auto_on'>AutoUpdate</a>") );
     sz += wprint( F(" | <a href='/scanwifi'>ScanWiFi</a>") );
     sz += wprintln( F(" |") );
+    sz += wprintln( F("<br>") );
+    
+    // SliderBar Graphic
+    if (gAutoAdminRefresh > 0 ) {
+      sz += wprintln( );
+      sz += wprintln( F("<!-- SliderBar1 -->") );
+      sz += sliderBar( F("AutoAdminRefresh"), F("Interval:"), 0, 300, 10, gAutoAdminRefresh, F("Sec"), F("/admin") );
+      sz += wprintln( F("<br>") );
+    }
+    sz += wprintln( F("<br>") );
     
 
     sz += wprintln( );
@@ -86,7 +103,7 @@ adminPage( int aAutoRefresh = -1 )
     // Generate Html Footer
     sz += htmlPageFooter();
     
-    Serial.println ( F(" . . Finshed /admin Build") );
+    PAGE_MONITOR_REPORT_END;
     
     return sz;
  
@@ -103,7 +120,7 @@ void
 ICACHE_FLASH_ATTR
 handleAdminPage()
 {
-    long pageLength = 0;
+    long sz = 0;
     gSentSize = 0;
     
     gCurrentPage = ADMINPAGE;
@@ -113,15 +130,15 @@ handleAdminPage()
       gHits++;
       
       // HTTP Header
-      wprintln(  F("HTTP/1.1 200 OK") );
-      wprintln(  F("Content-Type: text/html") );
-      wprintln( ); // A Blank Line
+      sz += wprintln(  F("HTTP/1.1 200 OK") );
+      sz += wprintln(  F("Content-Type: text/html") );
+      sz += wprintln( ); // A Blank Line
       
-      pageLength += adminPage ( (gAutoAdmin ? 30 : -1) );
+      sz += adminPage();
     
-      pageLength += wprint( "", true ); // Final Packet
+      sz += wprint( "", true ); // Final Packet
 
-      PAGE_MONITOR_REPORT;
+      PAGE_MONITOR_REPORT_TOTAL;
       
     digitalWrite ( gGrnLED, OFF );
     yield();

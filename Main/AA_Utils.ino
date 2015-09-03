@@ -121,7 +121,7 @@ wprintln(String aStr = "", boolean aFinish = false)
 //
 long
 ICACHE_FLASH_ATTR
-htmlPageHeader( String aTitle, int aAutoRefresh = -1, String aURL = "/" )
+htmlPageHeader( String aTitle, int aAutoRefresh = 0, String aURL = "/" )
 {
     long sz = 0;
     
@@ -132,7 +132,7 @@ htmlPageHeader( String aTitle, int aAutoRefresh = -1, String aURL = "/" )
     sz += wprintln( F("<html>") );
     sz += wprintln( F("  <head>") );
     sz += wprintln( sF("    <title>") + aTitle + F("</title>") );
-    if (aAutoRefresh >= 0 ) sz += wprintln( sF("    <meta http-equiv='refresh' content='") + String(aAutoRefresh) + F(";URL=") + aURL + F("'/>") );
+    if (aAutoRefresh > 0 ) sz += wprintln( sF("    <meta http-equiv='refresh' content='") + String(aAutoRefresh) + F(";URL=") + aURL + F("'/>") );
     sz += wprintln( F("    <meta name='viewport' content='width=device-width, initial-scale=1'/>") );
     sz += wprintln( F("    <meta http-equiv='Pragma' content='no-cache'>") );
     sz += wprintln( F("    <link rel='shortcut icon' href='http://espressif.com/favicon.ico'>") ); // Redirect requests for "/favicon.ico" 
@@ -184,7 +184,7 @@ htmlPageFooter()
     
     sz += wprintln( F("Created at: <b>") );
     sz += wprint  ( String ( (gSentSize / ((millis() - gPageStartTime)/1000.0)/1000.0), 1 ) );
-    sz += wprint  ( F("</b> Mb/Sec") );
+    sz += wprint  ( F("</b> MB/Sec") );
     sz += wprint  ( F(" - <b>") );
     sz += wprint  ( String ( (millis() - gPageStartTime)/1000.0, 3 ) );
     sz += wprint  ( F("</b> CPU Secs - <b>") );
