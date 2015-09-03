@@ -20,14 +20,21 @@
 //
 long
 ICACHE_FLASH_ATTR
-homePage(int aAutoRefresh )
+homePage()
 {
     long sz = 0;
 
     PAGE_MONITOR_REPORT_START;
     
+    PAGE_MONITOR_REPORT_ARGS;
+
+    // Parse Args
+    for ( byte i = 0; i < gServer.args(); i++ ) {
+       if (gServer.argName(i) == F("AutoHomeRefresh") ) gAutoHomeRefresh = constrain (gServer.arg(i).toInt(), 0, 300);
+    }
+    
     // Generate Html Header
-    sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/home") );
+    sz += htmlPageHeader( gDeviceName, gAutoHomeRefresh, gServer.uri() );
         
     // Page Content Starts here
     
@@ -48,7 +55,7 @@ homePage(int aAutoRefresh )
     // Options
     sz += wprintln( );
     sz += wprintln( F("<!-- Options -->") );
-    if (gAutoHome)
+    if (gAutoHomeRefresh>0)
          sz += wprint  ( F(" | <a href='/home/auto_off'>ManUpdate</a>") );
     else sz += wprint  ( F(" | <a href='/home/auto_on'>AutoUpdate</a>") );
     sz += wprint  ( F(" | <a href='/t/v'>Verbose</a>") );
@@ -56,20 +63,11 @@ homePage(int aAutoRefresh )
     sz += wprintln( F("<br>") );
 
     // SliderBar Graphic
-    if (aAutoRefresh >= 0 ) {
+    if (gAutoHomeRefresh > 0 ) {
       sz += wprintln( );
       sz += wprintln( F("<!-- SliderBar1 -->") );
-      sz += wprintln( F("Page Update") );
+      sz += sliderBar( F("AutoHomeRefresh"), F("Interval:"), 0, 300, 10, gAutoHomeRefresh, F("Sec"), F("/home") );
       sz += wprintln( F("<br>") );
-      sz += sliderBar( F("IdAutoHome1"), F("Interval:"), 0, 120, 10, 60, F("Sec") );
-      sz += wprintln( F("<br>") );
-      
-      sz += wprintln( F("<br>") );
-      sz += wprintln( );
-      sz += wprintln( F("<!-- SliderBar2 -->") );
-      sz += wprintln( F("Decoder") );
-      sz += wprintln( F("<br>") );
-      sz += sliderBar( F("IdData2"), F("Percent:"), 10, 90, 1, 50, F("%") );
     }
     sz += wprintln( F("<br>") );
 
@@ -239,7 +237,7 @@ handleHomePage()
       sz += wprintln( F("Content-Type: text/html") );
       sz += wprintln( ); // A Blank Line
       
-      sz += homePage ( (gAutoHome ? 60 : -1) );
+      sz += homePage();
     
       sz += wprint( "", true ); // Final Packet
 

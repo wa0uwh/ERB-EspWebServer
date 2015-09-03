@@ -26,6 +26,8 @@ lineGraphic( int w = 300, int h = 100 )
     
     PAGE_MONITOR_REPORT_START;
     
+    PAGE_MONITOR_REPORT_ARGS;
+    
     sz += wprintln(  );
     sz += wprintln(  F("<!-- Graphic -->") );
         

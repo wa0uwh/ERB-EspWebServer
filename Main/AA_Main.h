@@ -60,6 +60,10 @@
             + F(", FreeHeap: ") + String( ESP.getFreeHeap() / 1000.0, 3 )\
             + F(", PageSize: ") + String( sz / 1000.0, 3 )\
             + F(", Hits: ") + String(gHits) )
+            
+    #define PAGE_MONITOR_REPORT_ARGS Serial.println(" Args:");\
+            for ( byte i = 0; i < gServer.args(); i++ )\
+                Serial.println( "  " + gServer.argName ( i ) + ": " + gServer.arg ( i ) )
     
     #define COPYRIGHT1 PSTR("\
      /* \

@@ -28,6 +28,8 @@ handleNotFound()
     
     PAGE_MONITOR_REPORT_START;
     
+    PAGE_MONITOR_REPORT_ARGS;
+    
     digitalWrite ( gGrnLED, ON );
       gHits++;
       

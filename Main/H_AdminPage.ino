@@ -20,14 +20,21 @@
 //
 long
 ICACHE_FLASH_ATTR
-adminPage( int aAutoRefresh = -1 )
+adminPage()
 {
     long sz = 0;
 
     PAGE_MONITOR_REPORT_START;
     
+    PAGE_MONITOR_REPORT_ARGS;
+    
+    // Parse Args
+    for ( byte i = 0; i < gServer.args(); i++ ) {
+       if (gServer.argName(i) == F("AutoAdminRefresh") ) gAutoAdminRefresh = constrain (gServer.arg(i).toInt(), 0, 300);
+    }
+    
     // Generate Html Header
-    sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/admin") );
+    sz += htmlPageHeader( gDeviceName, gAutoAdminRefresh, F("/admin") );
     
     // Page Content Starts here
     
@@ -39,11 +46,21 @@ adminPage( int aAutoRefresh = -1 )
    
     // Admin's SCAN Link
     sz += wprintln( F("\r\n<!-- Options -->") );
-    if (gAutoAdmin) 
+    if (gAutoAdminRefresh > 0) 
          sz += wprint( F(" | <a href='/admin/auto_off'>ManUpdate</a>") );
     else sz += wprint( F(" | <a href='/admin/auto_on'>AutoUpdate</a>") );
     sz += wprint( F(" | <a href='/scanwifi'>ScanWiFi</a>") );
     sz += wprintln( F(" |") );
+    sz += wprintln( F("<br>") );
+    
+    // SliderBar Graphic
+    if (gAutoAdminRefresh > 0 ) {
+      sz += wprintln( );
+      sz += wprintln( F("<!-- SliderBar1 -->") );
+      sz += sliderBar( F("AutoAdminRefresh"), F("Interval:"), 0, 300, 10, gAutoAdminRefresh, F("Sec"), F("/admin") );
+      sz += wprintln( F("<br>") );
+    }
+    sz += wprintln( F("<br>") );
     
 
     sz += wprintln( );
@@ -117,7 +134,7 @@ handleAdminPage()
       sz += wprintln(  F("Content-Type: text/html") );
       sz += wprintln( ); // A Blank Line
       
-      sz += adminPage ( (gAutoAdmin ? 30 : -1) );
+      sz += adminPage();
     
       sz += wprint( "", true ); // Final Packet
 

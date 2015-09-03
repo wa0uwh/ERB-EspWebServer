@@ -26,6 +26,8 @@ scanWifi()
     
     PAGE_MONITOR_REPORT_START;
     
+    PAGE_MONITOR_REPORT_ARGS;
+    
     // WiFi.scanNetworks will return the number of networks found
     byte n = WiFi.scanNetworks();
     if (n == 0)

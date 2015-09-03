@@ -26,6 +26,8 @@ clockGauge(int w = 200, int h = 200)
 
     PAGE_MONITOR_REPORT_START;
     
+    PAGE_MONITOR_REPORT_ARGS;
+    
     sz += wprintln( );
     sz += wprintln( F("<!-- Dial Graphic Image -->") );
     

@@ -48,6 +48,7 @@
      *      Implemented Data Creation Rate Per Web Page Function\
      *      Implemented a Used CPU Seconds Value for Display\
      *      Implemented a link to a Use Map Display\
+     *      Implemented Slider Bars, Currently used for Page Refresh Interval\
      */ \
  ")
 
@@ -70,11 +71,11 @@ extern "C" {
 // Note: By my convention, All Global Variables and Constants start with a letter "g".
 
 
-const char *gRev = "ERB_MB_07";  // Software Revision Code
+const char *gRev = "ERB_MC";  // Software Revision Code
 
 
-String gSsid = "EBCON";     // Change to your SSID
-String gPasswd = "9patches";   // Change to your Passwd
+String gSsid = ".....";     // Change to your SSID
+String gPasswd = "........";   // Change to your Passwd
 
 
 String gSsidPrev = gSsid;
@@ -116,10 +117,10 @@ int gVisitorMapStyle = 1;
  
 long gHits = 0;                  // Web page Hit Counter
 
-// Automatic Page Update Flags
-boolean gAutoHelp = false;
-boolean gAutoHome = true;
-boolean gAutoAdmin = false;
+// Initial Automatic Page Refresh Intervals
+int gAutoHomeRefresh = 60;
+int gAutoHelpRefresh = 180;
+int gAutoAdminRefresh = 180;
 
 
 unsigned long gNextNTPSchd = millis();

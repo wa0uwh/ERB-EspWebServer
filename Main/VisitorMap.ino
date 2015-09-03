@@ -25,6 +25,8 @@ visitorMap() {
   long sz = 0;
   
         PAGE_MONITOR_REPORT_START;
+    
+        PAGE_MONITOR_REPORT_ARGS;
 
         // Provide Optional Visitor Map
         sz += wprintln( );
@@ -56,7 +58,7 @@ visitorMap() {
         }   
         sz += wprintln(  F("<br>") );
         sz += wprintln( sF("<form method='GET' action='/") + String((gVisitorMapState == true) ? "off" : "on") + F("/vismap'>") );
-        sz += wprint  (  F("<b>Visitor Map</b> -&gt; ") );
+        sz += wprint  (  F("<b>World Wide Shared Visitor Map</b> -&gt; ") );
         sz += wprintln( sF(" <input type='submit' name='' value='") + String((gVisitorMapState == true) ? "OFF" : "ON") + F("' />") );
         sz += wprintln(  F("</form>") );
 

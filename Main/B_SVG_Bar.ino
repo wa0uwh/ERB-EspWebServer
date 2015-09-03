@@ -25,6 +25,8 @@ barGraphic()
     long sz = 0;
     
     PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
         
     // HTML5 Graphic
     sz += wprintln( );

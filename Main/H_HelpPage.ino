@@ -20,14 +20,21 @@
 //
 long
 ICACHE_FLASH_ATTR
-helpPage(int aAutoRefresh )
+helpPage()
 {
     long sz = 0;
     
     PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
+    
+    // Parse Args
+    for ( byte i = 0; i < gServer.args(); i++ ) {
+       if (gServer.argName(i) == F("AutoHelpRefresh") ) gAutoHelpRefresh = constrain (gServer.arg(i).toInt(), 0, 300);
+    }
  
     // Generate Html Header
-    sz += htmlPageHeader( gDeviceName, aAutoRefresh, F("/help") );
+    sz += htmlPageHeader( gDeviceName, gAutoHelpRefresh, F("/help") );
         
     // Page Content Starts here
     
@@ -48,10 +55,20 @@ helpPage(int aAutoRefresh )
     // Verbose Option
     sz += wprintln( );
     sz += wprintln(  F("<!-- Options -->") );
-    if (gAutoHelp)
+    if (gAutoHelpRefresh > 0)
          sz += wprint(  F(" | <a href='/help/auto_off'>ManUpdate</a>") );
     else sz += wprint(  F(" | <a href='/help/auto_on'>AutoUpdate</a>") );
     sz += wprintln(  F(" |") );
+    sz += wprintln( F("<br>") );
+    
+    // SliderBar Graphic
+    if (gAutoHelpRefresh > 0 ) {
+      sz += wprintln( );
+      sz += wprintln( F("<!-- SliderBar1 -->") );
+      sz += sliderBar( F("AutoHelpRefresh"), F("Interval:"), 0, 300, 10, gAutoHelpRefresh, F("Sec"), F("/help") );
+      sz += wprintln( F("<br>") );
+    }
+    sz += wprintln( F("<br>") );
     
     // Page Report
     sz += wprintln( );
@@ -184,7 +201,7 @@ handleHelpPage()
       sz += wprintln( F("Content-Type: text/html") );
       sz += wprintln( ); // A Blank Line
       
-      sz += helpPage ( (gAutoHelp ? 60 : -1) );
+      sz += helpPage();
       
       sz += wprint( "", true ); // Final Packet
 

@@ -72,7 +72,9 @@ infoPage()
 {
     long sz = 0;
     
-    PAGE_MONITOR_REPORT_END;
+    PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
 
     // Generate Html Header
     sz += htmlPageHeader( gDeviceName, -1 );

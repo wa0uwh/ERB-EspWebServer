@@ -20,11 +20,13 @@
 //
 long
 ICACHE_FLASH_ATTR
-sliderBar(  String aId = "Id0", String aLabel = "Label0", int aMin = 0, int aMax = 100, int aStp = 5, int aVal = 50, String aUnits = "")
+sliderBar(  String aId = "Id0", String aLabel = "Label0", int aMin = 0, int aMax = 100, int aStp = 5, int aVal = 50, String aUnits = "", String aBaseURI = "/")
 {
     long sz = 0;
     
     PAGE_MONITOR_REPORT_START;
+    
+    PAGE_MONITOR_REPORT_ARGS;
     
     sz += wprintln(  );
     sz += wprintln(  F("<!-- SliderBar Script -->") );
@@ -41,22 +43,30 @@ sliderBar(  String aId = "Id0", String aLabel = "Label0", int aMin = 0, int aMax
     sz += wprintln(  );
     sz += wprintln(  F("<!-- SliderBar Input -->") );
     
-    sz += wprintln( sF("<label for='") + String( aId ) + F("'>") + String( aLabel ) + F("</label>") );
-    sz += wprintln( sF("<input type='range' id='") + String( aId ) + F("_range'") );
-    sz += wprintln( sF("  min='")  + String( aMin ) + F("' max='")   + String( aMax ) + F("'") );
-    sz += wprintln( sF("  step='") + String( aStp ) + F("' value='") + String( aVal ) + F("'") );
-    sz += wprintln( sF("  oninput='")  + String( aId ) + F("_ShowValue(value)'") );
-    sz += wprintln(  F("/>") );
-    sz += wprint  ( sF("<output for='") + String( aId ) + F("'") );
-    sz += wprint  ( sF("  id='") + String( aId ) + F("_display'>") + String( aVal ) );
-    sz += wprintln( sF("</output>") + String( aUnits ) );
-
-    sz += wprintln(  );
-    sz += wprint  ( sF("<output for='") + String( aId ) + F("'") );
-    sz += wprint  ( sF("  id='") + String( aId ) + F("_action'>") + String( aVal ) );
-    sz += wprintln( sF("</output>"));
- 
-    sz += wprintln(  F("<br>(Not Working Yet)") );
+//    sz += wprintln(  F("<form action='/home' method='get'>") );
+    sz += wprintln(  sF("<form action='") + String( aBaseURI ) + F("' method='get'>") );
+    {
+        sz += wprintln( String( aLabel ) );
+        sz += wprintln( sF("<input type='range' name='") + String( aId ) + F("'") );
+        sz += wprintln( sF("  min='")  + String( aMin ) + F("' max='")   + String( aMax ) + F("'") );
+        sz += wprintln( sF("  step='") + String( aStp ) + F("' value='") + String( aVal ) + F("'") );
+        sz += wprintln( sF("  oninput='")  + String( aId ) + F("_ShowValue(value)'") );
+        sz += wprintln(  F("/>") );
+        
+        sz += wprint  ( sF("<output for='") + String( aId ) + F("'") );
+        sz += wprint  ( sF("  id='") + String( aId ) + F("_display'>") + String( aVal ) );
+        sz += wprintln( sF("</output>") + String( aUnits ) );
+        
+        sz += wprintln( sF("<input type='submit' value='GO'>") );
+        
+//        sz += wprintln(  );
+//        sz += wprint  ( sF("<output for='") + String( aId ) + F("'") );
+//        sz += wprint  ( sF("  id='") + String( aId ) + F("_action'>") + String( aVal ) );
+//        sz += wprintln( sF("</output>"));
+     
+//        sz += wprintln(  F("<br>(Not Working Yet)") );
+    }
+    sz += wprintln( sF("</form>") );
     
     PAGE_MONITOR_REPORT_END;
     
