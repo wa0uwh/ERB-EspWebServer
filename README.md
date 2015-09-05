@@ -36,6 +36,7 @@ Features:
       Implemented Data Creation Rate Per Web Page Function  
       Implemented a Used CPU Seconds Value for Display  
       Implemented a link to a Use Map Display
+      Implemented Slider Bars, Currently used for Page Refresh Interval
 
 --
 

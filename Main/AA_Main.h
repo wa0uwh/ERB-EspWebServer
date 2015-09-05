@@ -1,17 +1,18 @@
 // AA_Main.h
 
-  /*
-   * Copyright (c) 2015, Eldon R. Brown - ERB - WA0UWH - eldonb@ebcon.com
-   *
-   * See Blog at: http://WA0UWH.blogspot.com
-   *
-   * All rights reserved. See FULL Copyright in Main.h or Info Page for Exclusions
-   *
-   * Inspired by work by: Majenko Technologies - 2015 Esp8266 AdvancedWebServer
-   *
-   * See: https://github.com/esp8266/Arduino
-   */
-
+/*
+ * Copyright (c) 2015, Eldon R. Brown - ERB - WA0UWH - eldonb@ebcon.com
+ *
+ * See my Blog, at: http://WA0UWH.blogspot.com
+ *
+ * See my Source at GitHub, at: https://github.com/wa0uwh/ERB-EspWebServer
+ *
+ * All rights reserved. See FULL Copyright in Main or Info Page for Exclusions
+ *
+ * This Effort was Inspired by work by: Majenko Technologies - 2015 Esp8266 AdvancedWebServer
+ *
+ * See also Arduino IDE, at: https://github.com/esp8266/Arduino
+ */
 
 
 #ifndef A1MAIN_H
@@ -47,37 +48,31 @@
     
     #define FreeHeapScaleLo (4000)
     #define FreeHeapScaleHi (20000)
+
+
     
-    #define PAGE_MONITOR_REPORT_START Serial.println ( sF("\nStart ") + String( __func__ )\
+    #define DEBUG_MONITOR_REPORT_START() Serial.println ( sF("\nStart ") + String( __func__ )\
             + F(" Build for: ")\
             + String(ipa2str(gServer.client().remoteIP())) +F(" . . ") )
 
-    #define PAGE_MONITOR_REPORT_END Serial.println ( sF("  . . Finshed ") + String( __func__ )\
+    #define DEBUG_MONITOR_REPORT_END() Serial.println ( sF("  . . Finshed ") + String( __func__ )\
             + F(" Build") )
 
-    #define PAGE_MONITOR_REPORT_TOTAL Serial.println( sF("Sent: ") + String(__func__)\
+    #define DEBUG_MONITOR_REPORT_TOTAL() Serial.println( sF("Sent: ") + String(__func__)\
             + F(", URI: ") + gServer.uri()\
             + F(", FreeHeap: ") + String( ESP.getFreeHeap() / 1000.0, 3 )\
             + F(", PageSize: ") + String( sz / 1000.0, 3 )\
-            + F(", Hits: ") + String(gHits) )
+            + F(", Hits: ") + String(gHits) + F("\r\n") )
             
-    #define PAGE_MONITOR_REPORT_ARGS Serial.println(" Args:");\
-            for ( byte i = 0; i < gServer.args(); i++ )\
-                Serial.println( "  " + gServer.argName ( i ) + ": " + gServer.arg ( i ) )
-    
-    #define COPYRIGHT1 PSTR("\
-     /* \
-      * Copyright (c) 2015, Eldon R. Brown - ERB - WA0UWH - eldonb@ebcon.com\
-      * \
-      * See Blog at: <a href='http://WA0UWH.blogspot.com'>http://WA0UWH.blogspot.com</a>\
-      * \
-      * All rights reserved. See FULL Copyright in Main.h or Info Page for Exclusions\
-      * \
-      * Inspired by work by: Majenko Technologies - 2015 Esp8266 AdvancedWebServer\
-      * \
-      * See: <a href='https://github.com/esp8266/Arduino'>https://github.com/esp8266/Arduino</a>\
-      */ \
-    ")
+    #define DEBUG_MONITOR_REPORT_ARGS() if ( gServer.args() ) {\
+              Serial.println(" Args:");\
+              for ( byte i = 0; i < gServer.args(); i++ )\
+                  Serial.println( "  " + gServer.argName(i) + "=" + gServer.arg(i) );\
+            }
+
+
+
+
     
     #define COPYRIGHT2 PSTR("\
      /* \

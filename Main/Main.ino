@@ -1,16 +1,25 @@
-//  EspNode
+//  Main
 
-  /*
-   * Copyright (c) 2015, Eldon R. Brown - ERB - WA0UWH - eldonb@ebcon.com
-   *
-   * See Blog at: http://WA0UWH.blogspot.com
-   *
-   * All rights reserved. See FULL Copyright in Main.h or Info Page for Exclusions
-   *
-   * Inspired by work by: Majenko Technologies - 2015 Esp8266 AdvancedWebServer
-   *
-   * See: https://github.com/esp8266/Arduino
-   */
+
+#define COPYRIGHT1 PSTR("\
+     /* \
+      * Copyright (c) 2015, Eldon R. Brown - ERB - WA0UWH - eldonb@ebcon.com \
+      * \
+      * See my Blog, at: http://WA0UWH.blogspot.com \
+      * \
+      * See my Source at GitHub, at: https://github.com/wa0uwh/ERB-EspWebServer \
+      * \
+      * All rights reserved. See FULL Copyright in Main.ino, or Info Web Page for Exclusions \
+      * \
+      * This Effort was Inspired by work by: Majenko Technologies - 2015 Esp8266 AdvancedWebServer \
+      * \
+      * See also Arduino IDE, at: https://github.com/esp8266/Arduino \
+      * \
+      * Contritutors: \
+      * \
+      * \
+      */ \
+")
 
 #define INTRODUCTION PSTR("\
     /* \
@@ -71,10 +80,10 @@ extern "C" {
 // Note: By my convention, All Global Variables and Constants start with a letter "g".
 
 
-const char *gRev = "ERB_MC";  // Software Revision Code
+const char *gRev = "ERB_MD";  // Software Revision Code
 
 
-String gSsid = ".....";     // Change to your SSID
+String gSsid = ".....";        // Change to your SSID
 String gPasswd = "........";   // Change to your Passwd
 
 
@@ -119,8 +128,8 @@ long gHits = 0;                  // Web page Hit Counter
 
 // Initial Automatic Page Refresh Intervals
 int gAutoHomeRefresh = 60;
-int gAutoHelpRefresh = 180;
-int gAutoAdminRefresh = 180;
+int gAutoHelpRefresh = 240;
+int gAutoAdminRefresh = 240;
 
 
 unsigned long gNextNTPSchd = millis();
