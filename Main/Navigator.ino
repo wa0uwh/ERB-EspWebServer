@@ -45,7 +45,8 @@ navigator( )
     sz += wprint  ( F(" | <a href='http://www.esp8266.com/'>Forum</a>") );
     sz += wprint  ( F(" | <a href='http://bbs.espressif.com/'>BBS</a>") );
     sz += wprint  ( F(" | <a href='http://neilkolban.com/tech/esp8266/'>TheBOOK</a>") );
-    sz += wprint  ( F(" | <a href='https://github.com/esp8266/Arduino'>GitHub</a>") );
+    sz += wprint  ( F(" | <a href='https://github.com/esp8266/Arduino'>IDE</a>") );
+    sz += wprint  ( F(" | <a href='https://github.com/wa0uwh/ERB-EspWebServer'>GitHub</a>") );
     sz += wprintln( F(" |") );
     
     sz += wprintln( F(" </td></tr>") );

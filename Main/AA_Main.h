@@ -63,6 +63,15 @@
             + F(", FreeHeap: ") + String( ESP.getFreeHeap() / 1000.0, 3 )\
             + F(", PageSize: ") + String( sz / 1000.0, 3 )\
             + F(", Hits: ") + String(gHits) + F("\r\n") )
+
+    #define DEBUG_MONITOR_REPORT_ANONYMOUS_FUNCTION() Serial.println( sF("Sent: Data for Query")\
+            + F(", URI: ") + gServer.uri()\
+            + F(" for: ")\
+            + String(ipa2str(gServer.client().remoteIP()) )\
+            + F(", Hits: ") + String(gHits) + F("\r\n") )
+
+    // Shorthand for the above
+    #define DMRAF() DEBUG_MONITOR_REPORT_ANONYMOUS_FUNCTION()
             
     #define DEBUG_MONITOR_REPORT_ARGS() if ( gServer.args() ) {\
               Serial.println(" Args:");\
