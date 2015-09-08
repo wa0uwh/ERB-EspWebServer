@@ -18,48 +18,23 @@
 // ###########################################################
 //////////////////////////////////////////////////////////////
 //
-// This Function inserts "\r\n" into the begining of typical Comment lines for transfer to WIFI
-// where "<blockquote><pre>" and "</pre></blockquote>" are used to control web text format.
-// Note: the Required two leading spaces before the Comment, which prevents recursion
-//
-String &
-ICACHE_FLASH_ATTR
-_comment2html( String & aStr)  // Use with CAUTION, Requires contrived Comments
-{
-      aStr.replace( F("  /* "),  F("\r\n/* ") );
-      aStr.replace( F("   * "),  F("\r\n * ") );
-      aStr.replace( F("   */ "), F("\r\n */ \r\n") );
-
-      return aStr;
-}
-
-// ###########################################################
-//////////////////////////////////////////////////////////////
-//
-// This Function uses "small" buffers to transfer "large blocks" of Comment Text to WIFI
+// This Function uses "small" buffers to transfer "large blocks" of Text to WIFI
 //
 long
 ICACHE_FLASH_ATTR
-sendComment_P( PGM_P aPCom )
+sendAsIs_P( PGM_P aPCom )
 {
       long sz = 0;
       PGM_P pC = aPCom;
       long pLen = strlen_P(aPCom);
-      char buf[65];
-      String TmpBuf = "";
+      char buf[64];
       
       while(pC < aPCom + pLen) {
         strncpy_P(buf, pC, sizeof(buf));
         buf[sizeof(buf)] = 0;
         pC += strlen(buf);
-        TmpBuf += String (buf);
-        _comment2html(TmpBuf);  // Add "/r/n" as necessary
-        while(TmpBuf.length() > 40) {
-          sz += wprint( TmpBuf.substring(0,32) );
-          TmpBuf = TmpBuf.substring(32);
-        }
-      }
-      sz += wprintln( TmpBuf );
+        sz += wprint( String (buf) );
+      };
       
       return sz;
 }
@@ -99,7 +74,7 @@ infoPage()
       sz += wprintln( F("<!-- Introduction -->") );
       sz += wprintln( F("<b>Introduction:</b>") );
       sz += wprintln( F("<blockquote><pre>") );
-        sz += sendComment_P( INTRODUCTION );
+        sz += sendAsIs_P( INTRODUCTION );
         sz += wprintln( );
       sz += wprintln( F("</pre></blockquote>") );
       
@@ -120,72 +95,25 @@ infoPage()
       sz += wprintln( F("<!-- Copyright -->") );
       sz += wprintln( F("<b>Copyright:</b>") );
       sz += wprintln( F("<blockquote><pre>") );
-        sz += sendComment_P( COPYRIGHT1 );
-        sz += sendComment_P( COPYRIGHT2 );
-        sz += sendComment_P( COPYRIGHT3 );
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-//        // 5 Groups of 10Kb = 50Kb 
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-//        sz += sendComment_P( TEST_10Kb );   // A 10Kb Test
-
-      
+        sz += sendAsIs_P( COPYRIGHT1 );
+        sz += sendAsIs_P( COPYRIGHT2 );
+        sz += sendAsIs_P( COPYRIGHT3 );
         sz += wprintln( );  
       sz += wprintln( F("</pre></blockquote>") );
+
+//      sz += wprintln( );  
+//      sz += wprintln( F("<!-- Test Pattern Transfer -->") );
+//      sz += wprintln( F("<b>Test Transfer:</b>") );
+//      sz += wprintln( F("<blockquote><pre>") );
+//        // 5 Groups of 10Kb = 50Kb 
+//        sz += sendAsIs_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendAsIs_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendAsIs_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendAsIs_P( TEST_10Kb );   // A 10Kb Test
+//        sz += sendAsIs_P( TEST_10Kb );   // A 10Kb Test\
+//        sz += wprintln( );  
+//      sz += wprintln( F("</pre></blockquote>") );
+
     }
     sz += wprintln( F("</blockquote>") );
 

@@ -40,7 +40,7 @@ _wprintstr(String aStr = "", boolean aFinish = false)
         logFreeHeap();
 
         if (!gServer.client().remoteIP()) {
-            Serial.println ( F(" Aborting Connection") );
+            Serial.println ( F(" Aborting Connection") ); // Abort for IPA: 0.0.0.0
             aFinish = true;
             break;
         }
