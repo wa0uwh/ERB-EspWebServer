@@ -33,10 +33,18 @@ _wprintstr(String aStr = "", boolean aFinish = false)
     
     _WifiBuf += aStr;
     yield();
-         
+
     int ErrorLoops = 0;
+
     while (_WifiBuf.length() >= 1460 || aFinish) {
         logFreeHeap();
+
+        if (!gServer.client().remoteIP()) {
+            Serial.println ( F(" Aborting Connection") );
+            aFinish = true;
+            break;
+        }
+
         
         int sentSizeTmp = gServer.client().print(_WifiBuf.substring(0, 1460));
         yield();
@@ -94,7 +102,7 @@ wprint(String aStr = "", boolean aFinish = false)
 { 
     long sz = 0;
     
-    sz += _wprintstr( aStr, aFinish);
+    sz += _wprintstr( aStr, aFinish );
     
     return sz;
 }
@@ -111,7 +119,7 @@ wprintln(String aStr = "", boolean aFinish = false)
     long sz = 0;
     
     aStr += F("\r\n");
-    sz += wprint( aStr, aFinish);
+    sz += wprint( aStr, aFinish );
     
     return sz;
 }
