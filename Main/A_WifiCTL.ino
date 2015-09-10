@@ -23,8 +23,9 @@ void
 //ICACHE_FLASH_ATTR
 initWifiAp()
 {
-    
-    restartWifiAp();
+
+    gApTimeout = 0;
+    WiFi.mode( WIFI_AP );
     //WiFi.softAP( gDeviceName, "passwd1234", gApChannel );
     WiFi.softAP( gDeviceName, 0, gApChannel );  // For Open AP Network
     yield();
@@ -64,13 +65,9 @@ void
 initWifiStn()
 {
     
-    restartWifiAp();
-    
+    WiFi.mode( WIFI_AP_STA );
     Serial.print ( F("Trying to Connect to: ") );
-    
-    //WiFi.disconnect();
-    delay(100);
-    
+ 
     if (gPasswd.length() == 0) {   
          Serial.print ( gSsid + F("(open)*") );
          WiFi.begin ( gSsid.c_str() ); 
@@ -96,6 +93,7 @@ try2StartWifiStn()
     
     if (!gWifiStnAttempts) initWifiStn(); 
     
+    delay ( 100 );
     if ( WiFi.status() != WL_CONNECTED ) {
     	delay ( 500 );
     	Serial.print ( "." );

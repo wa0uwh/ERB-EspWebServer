@@ -15,6 +15,139 @@
  */
 
 
+
+// ###########################################################
+//////////////////////////////////////////////////////////////
+//
+// This is a Private Buffer Function, used to Transfer "Blocks" of Data to WIFI
+//
+long
+//ICACHE_FLASH_ATTR
+wSendBuf(const char* apBuf, long aLen, boolean aFinish = false)
+{ 
+
+    long sentSize = 0;
+    long sentSizeTmp = 0;
+    
+    long p = 0;
+    
+    if (gMarkFlag == true) logFreeHeapMarkDn(); // Mark Start of Web Page
+    
+    int ErrorLoops = 0;
+
+    while ( p < aLen ) {
+
+      if (!gServer.client().remoteIP()) {
+          Serial.println ( F(" Aborting Connection") ); // Abort for IPA: 0.0.0.0
+          aFinish = true;
+          break;
+      }
+
+      long no2Send = aLen - p;
+      if (no2Send > 1460) no2Send = 1460;
+      sentSizeTmp = gServer.client().write(apBuf + p, no2Send);
+      Serial.println ( sF(" Wifi, Sent Buf Size: ") + String(sentSizeTmp) );
+
+      if (sentSizeTmp > 0) {
+          ErrorLoops = 0;
+          sentSize += sentSizeTmp;
+          p += sentSizeTmp;
+      } else {  // Try again.
+          ErrorLoops++;
+          if (ErrorLoops > 3) {
+            aFinish = true;
+            Serial.println ( F(" Exiting Loop with: Error") ); 
+            break;
+          }
+          for (int i = 5; i > 0; i--) { // While Trying again, delay for at least 500ms, with yield
+            delay(100);
+            yield();
+          }
+      }
+    }
+
+    if (aFinish == true ) {
+        gServer.client().flush();
+        yield();
+        gServer.client().stop();
+        yield();
+        
+        Serial.println ( F(" Buf Connection Flushed and Closed") );
+        
+        if (gMarkFlag == false) logFreeHeapMarkUp(); // Mark End of Web Page
+    } 
+
+    return sentSize;
+}
+
+
+// ###########################################################
+//////////////////////////////////////////////////////////////
+//
+// This is a Buf_P Function, used to Transfer "Blocks" of Data to WIFI
+//
+long
+//ICACHE_FLASH_ATTR
+wSendBuf_P(PGM_P apBuf, long aLen, boolean aFinish = false)
+{ 
+
+    long sentSize = 0;
+    long sentSizeTmp = 0;
+    
+    PGM_P p = apBuf;
+    char buf[1460+1];
+    
+    if (gMarkFlag == true) logFreeHeapMarkDn(); // Mark Start of Web Page
+    
+    int ErrorLoops = 0;
+
+    while ( p < apBuf + aLen ) {
+
+      if (!gServer.client().remoteIP()) {
+          Serial.println ( F(" Aborting Connection") ); // Abort for IPA: 0.0.0.0
+          aFinish = true;
+          break;
+      }
+      
+      long size2Send = (apBuf + aLen) - p;
+      if (size2Send > sizeof(buf)) size2Send = sizeof(buf)-1;
+      if (size2Send > 1460) size2Send = 1460;
+      memcpy_P(buf, p, size2Send);
+      sentSizeTmp = gServer.client().write((const char*) buf, size2Send);
+      Serial.println ( sF(" Wifi, Sent Buf_P Size: ") + String(sentSizeTmp) );
+
+      if (sentSizeTmp > 0) {
+          ErrorLoops = 0;
+          sentSize += sentSizeTmp;
+          p += sentSizeTmp;
+      } else {  // Try again.
+          ErrorLoops++;
+          if (ErrorLoops > 3) {
+            aFinish = true;
+            Serial.println ( F(" Exiting Loop with: Error") ); 
+            break;
+          }
+          for (int i = 5; i > 0; i--) { // While Trying again, delay for at least 500ms, with yield
+            delay(100);
+            yield();
+          }
+      }
+    }
+
+    if (aFinish == true ) {
+        gServer.client().flush();
+        yield();
+        gServer.client().stop();
+        yield();
+        
+        Serial.println ( F(" Buf Connection Flushed and Closed") );
+        
+        if (gMarkFlag == false) logFreeHeapMarkUp(); // Mark End of Web Page
+    } 
+
+    return sentSize;
+}
+
 // ###########################################################
 //////////////////////////////////////////////////////////////
 //
@@ -27,7 +160,6 @@ long
 _wprintstr(String aStr = "", boolean aFinish = false)
 { 
     long sentSize = 0;
-    // static String _WifiBuf = ""; // This Static will not compile ??
     
     if (gMarkFlag == true) logFreeHeapMarkDn(); // Mark Start of Web Page
     
@@ -46,15 +178,15 @@ _wprintstr(String aStr = "", boolean aFinish = false)
         }
 
         
-        int sentSizeTmp = gServer.client().print(_WifiBuf.substring(0, 1460));
-        yield();
+        long no2Send = _WifiBuf.substring(0, 1460).length();
+        int sentSizeTmp = wSendBuf(_WifiBuf.c_str(), no2Send);
+//        Serial.println ( sF(" Wifi, Sent Str Size: ") + String(sentSizeTmp) );
         
         gSentSize += sentSizeTmp;
         sentSize  += sentSizeTmp;
         yield();
         
         _WifiBuf.remove(0,sentSizeTmp);  // Remove the Head of the buffer that was sent to WIFI
-        Serial.println ( sF(" Wifi, Sent Size: ") + String(sentSizeTmp) );
         
         if ( _WifiBuf.length() == 0 ) break;
    
@@ -83,7 +215,7 @@ _wprintstr(String aStr = "", boolean aFinish = false)
         yield();
         _WifiBuf = "";
         
-        Serial.println ( F(" Connection Flushed and Closed") ); 
+        Serial.println ( F(" Str Connection Flushed and Closed") ); 
     
         if (gMarkFlag == false) logFreeHeapMarkUp(); // Mark End of Web Page
     }
@@ -118,11 +250,36 @@ wprintln(String aStr = "", boolean aFinish = false)
 {   
     long sz = 0;
     
-    aStr += F("\r\n");
-    sz += wprint( aStr, aFinish );
+    sz += wprint( aStr + F("\r\n"), aFinish );
     
     return sz;
 }
+
+
+// ###########################################################
+//////////////////////////////////////////////////////////////
+//
+// This Function uses "small" buffers to transfer "large blocks" of Text to WIFI
+//
+long
+ICACHE_FLASH_ATTR
+wSendStr_P( PGM_P aPCom )
+{
+      long sz = 0;
+      PGM_P p = aPCom;
+      long pLen = strlen_P(aPCom);
+      char buf[64+1];
+      
+      while(p < aPCom + pLen) {
+        strncpy_P(buf, p, sizeof(buf));
+        buf[sizeof(buf)] = 0;
+        p += strlen(buf);
+        sz += wprint( String (buf) );
+      };
+      
+      return sz;
+}
+
   
 // ###########################################################
 //////////////////////////////////////////////////////////////
