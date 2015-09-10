@@ -14,6 +14,7 @@ extern "C" {
     uint16 readvdd33(void);
 }
 
+
 const char COPYRIGHT1[] PROGMEM = R"=====(
      /*
       * Copyright (c) 2015, Eldon R. Brown - ERB - WA0UWH - eldonb@ebcon.com
@@ -75,6 +76,7 @@ const char INTRODUCTION[] PROGMEM = R"=====(
      *      Implemented a Used CPU Seconds Value for Display
      *      Implemented a link to a Visitor Map Display
      *      Implemented Slider Bars, Currently used for Page Refresh Interval
+     *      Implemented Code to Serve Raw BINARY Data, for example: the Farm Server Image on Info Page
      */
 )=====";
 
@@ -84,10 +86,10 @@ const char INTRODUCTION[] PROGMEM = R"=====(
 // Note: By my convention, All Global Variables and Constants start with a letter "g".
 
 
-const char *gRev = "ERB_ME_01";  // Software Revision Code
+const char *gRev = "ERB_MF";  // Software Revision Code
 
 String gSsid = "EBCON";        // Change to your SSID
-String gPasswd = "........";   // Change to your Passwd
+//String gPasswd = "........";   // Change to your Passwd
 
 
 String gSsidPrev = gSsid;
@@ -210,6 +212,8 @@ setup ( void )
 //    Serial.println ( TimeZONE );
     
     Serial.println ( F("End: setup") );
+    Serial.println ( F("##################################") );
+    Serial.println ( ); Serial.println ( );
  
 }
 

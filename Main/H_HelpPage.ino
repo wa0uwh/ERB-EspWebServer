@@ -89,6 +89,7 @@ helpPage()
     sz += wprintln(  F("   <a href='/bar.svg'     >URL/bar.svg</a>       = Just The Test Bar Graphic, Note: This is not Actually an SVG") );
     sz += wprintln(  F("   <a href='/sliderbar'   >URL/sliderbar</a>     = Just The Test SliderBar Graphic") );
     sz += wprintln(  F("   <a href='/visitormap'  >URL/visitormap</a>    = Just The Test VisitorMap Graphic") );
+    sz += wprintln(  F("   <a href='/farm01.jpg'  >URL/farm01.jpg</a>    = Just The Test Esp Web Server Farm Image") );
     sz += wprintln(  F("</ul>") );
     
     // Modes
