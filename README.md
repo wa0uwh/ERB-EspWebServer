@@ -42,5 +42,6 @@ Current Features:
       o Implemented a Used CPU Seconds Value for Display.
       o Implemented a link to a Visitor Map Display.
       o Implemented Slider Bars, Currently used for Page Refresh Interval.
+      o Implemented Code to Serve Raw BINARY Data, for example: the Farm Server Image on Info Page
 
 --

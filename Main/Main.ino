@@ -76,7 +76,7 @@ const char INTRODUCTION[] PROGMEM = R"=====(
      *      Implemented a Used CPU Seconds Value for Display
      *      Implemented a link to a Visitor Map Display
      *      Implemented Slider Bars, Currently used for Page Refresh Interval
-     *      Implemented Code to Serve Raw Data, for example: the Farm Server Image on Info Page
+     *      Implemented Code to Serve Raw BINARY Data, for example: the Farm Server Image on Info Page
      */
 )=====";
 
@@ -86,11 +86,10 @@ const char INTRODUCTION[] PROGMEM = R"=====(
 // Note: By my convention, All Global Variables and Constants start with a letter "g".
 
 
-const char *gRev = "ERB_ME_10";  // Software Revision Code
+const char *gRev = "ERB_MF";  // Software Revision Code
 
 String gSsid = "EBCON";        // Change to your SSID
 //String gPasswd = "........";   // Change to your Passwd
-String gPasswd = "9patches";   // Change to your Passwd
 
 
 String gSsidPrev = gSsid;
