@@ -44,6 +44,7 @@ initHandlers()
     gServer.on ( "/bar.svg",       handleBar );
     gServer.on ( "/sliderbar",     handleSliderBar );
     gServer.on ( "/visitormap",    handleVisitorMap );
+    gServer.on ( "/farm01.jpg",    handleFarmImage );
     
     // Verbose Option, Hidden from HELP
     gServer.on ( "/on/vismap",      []() { gHits++; DMRAF(); gVisitorMapState = true;  pageDirector();} );
