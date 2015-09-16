@@ -14,7 +14,7 @@
  * See also Arduino IDE, at: https://github.com/esp8266/Arduino
  */
 
-
+extern long wprint(String, byte);
 
 // ###########################################################
 //////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 //
 long
 //ICACHE_FLASH_ATTR
-wSendBuf(const char* apBuf, long aLen, boolean aFinish = false)
+wSendBuf(const char* apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
 { 
 
     long sentSize = 0;
@@ -39,7 +39,7 @@ wSendBuf(const char* apBuf, long aLen, boolean aFinish = false)
 
       if (!gServer.client().remoteIP()) {
           Serial.println ( F(" Aborting Connection") ); // Abort for IPA: 0.0.0.0
-          aFinish = true;
+          aFinish = SEND_FINISH;
           break;
       }
 
@@ -55,7 +55,7 @@ wSendBuf(const char* apBuf, long aLen, boolean aFinish = false)
       } else {  // Try again.
           ErrorLoops++;
           if (ErrorLoops > 3) {
-            aFinish = true;
+            aFinish = SEND_FINISH;
             Serial.println ( F(" Exiting Loop with: Error") ); 
             break;
           }
@@ -66,7 +66,7 @@ wSendBuf(const char* apBuf, long aLen, boolean aFinish = false)
       }
     }
 
-    if (aFinish == true ) {
+    if (aFinish == SEND_FINISH ) {
         gServer.client().flush();
         yield();
         gServer.client().stop();
@@ -88,65 +88,17 @@ wSendBuf(const char* apBuf, long aLen, boolean aFinish = false)
 //
 long
 //ICACHE_FLASH_ATTR
-wSendBuf_P(PGM_P apBuf, long aLen, boolean aFinish = false)
+wSendBuf_P(PGM_P apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
 { 
-
-    long sentSize = 0;
-    long sentSizeTmp = 0;
+    long sz = 0;
     
-    PGM_P p = apBuf;
-    char buf[1460+1];
+    sz += wprint( "", SEND_BUFFER_NOW ); // Send Anything in String Buffer, First, NOW
     
-    if (gMarkFlag == true) logFreeHeapMarkDn(); // Mark Start of Web Page
+    sz += wSendBuf( (char*) apBuf, aLen, aFinish );
     
-    int ErrorLoops = 0;
-
-    while ( p < apBuf + aLen ) {
-
-      if (!gServer.client().remoteIP()) {
-          Serial.println ( F(" Aborting Connection") ); // Abort for IPA: 0.0.0.0
-          aFinish = true;
-          break;
-      }
-      
-      long size2Send = (apBuf + aLen) - p;
-      if (size2Send > sizeof(buf)) size2Send = sizeof(buf)-1;
-      if (size2Send > 1460) size2Send = 1460;
-      memcpy_P(buf, p, size2Send);
-      sentSizeTmp = gServer.client().write((const char*) buf, size2Send);
-      Serial.println ( sF(" Wifi, Sent Buf_P Size: ") + String(sentSizeTmp) );
-
-      if (sentSizeTmp > 0) {
-          ErrorLoops = 0;
-          sentSize += sentSizeTmp;
-          p += sentSizeTmp;
-      } else {  // Try again.
-          ErrorLoops++;
-          if (ErrorLoops > 3) {
-            aFinish = true;
-            Serial.println ( F(" Exiting Loop with: Error") ); 
-            break;
-          }
-          for (int i = 5; i > 0; i--) { // While Trying again, delay for at least 500ms, with yield
-            delay(100);
-            yield();
-          }
-      }
-    }
-
-    if (aFinish == true ) {
-        gServer.client().flush();
-        yield();
-        gServer.client().stop();
-        yield();
-        
-        Serial.println ( F(" Buf Connection Flushed and Closed") );
-        
-        if (gMarkFlag == false) logFreeHeapMarkUp(); // Mark End of Web Page
-    } 
-
-    return sentSize;
+    return sz;
 }
+
 
 // ###########################################################
 //////////////////////////////////////////////////////////////
@@ -157,7 +109,7 @@ String _WifiBuf = ""; // The Private WIFI Transfer Buffer
 //
 long
 //ICACHE_FLASH_ATTR
-_wprintstr(String aStr = "", boolean aFinish = false)
+_wprintstr(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 { 
     long sentSize = 0;
     
@@ -168,12 +120,12 @@ _wprintstr(String aStr = "", boolean aFinish = false)
 
     int ErrorLoops = 0;
 
-    while (_WifiBuf.length() >= 1460 || aFinish) {
+    while (_WifiBuf.length() >= 1460 || aFinish != SEND_WITH_BUFFERING) {
         logFreeHeap();
 
         if (!gServer.client().remoteIP()) {
             Serial.println ( F(" Aborting Connection") ); // Abort for IPA: 0.0.0.0
-            aFinish = true;
+            aFinish = SEND_FINISH;
             break;
         }
 
@@ -195,7 +147,7 @@ _wprintstr(String aStr = "", boolean aFinish = false)
         } else {  // Try again.
             ErrorLoops++;
             if (ErrorLoops > 3) {
-              aFinish = true;
+              aFinish = SEND_FINISH;
               Serial.println ( F(" Exiting Loop with: Error") ); 
               break;
             }
@@ -207,7 +159,7 @@ _wprintstr(String aStr = "", boolean aFinish = false)
         yield();
     }
     
-    if (aFinish == true) {
+    if (aFinish == SEND_FINISH) {
       
         gServer.client().flush();
         yield();
@@ -230,7 +182,7 @@ _wprintstr(String aStr = "", boolean aFinish = false)
 //
 long
 //ICACHE_FLASH_ATTR
-wprint(String aStr = "", boolean aFinish = false)
+wprint(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 { 
     long sz = 0;
     
@@ -246,7 +198,7 @@ wprint(String aStr = "", boolean aFinish = false)
 //
 long
 //ICACHE_FLASH_ATTR
-wprintln(String aStr = "", boolean aFinish = false)
+wprintln(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 {   
     long sz = 0;
     
@@ -263,19 +215,22 @@ wprintln(String aStr = "", boolean aFinish = false)
 //
 long
 ICACHE_FLASH_ATTR
-wSendStr_P( PGM_P aPCom )
+wSendStr_P( PGM_P aPCom, byte aFinish = SEND_WITH_BUFFERING )
 {
       long sz = 0;
       PGM_P p = aPCom;
       long pLen = strlen_P(aPCom);
-      char buf[64+1];
-      
+      char buf[128+1]; 
+    
       while(p < aPCom + pLen) {
         strncpy_P(buf, p, sizeof(buf));
         buf[sizeof(buf)] = 0;
         p += strlen(buf);
         sz += wprint( String (buf) );
       };
+      
+      sz += wprint( "", aFinish );
+      
       
       return sz;
 }

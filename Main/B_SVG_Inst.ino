@@ -303,7 +303,7 @@ handleInst()
       
       sz += instGauge(200, 200); // Create SVG Image
       
-      sz += wprintln( "", true ); // Final Packet
+      sz += wprintln( "", SEND_FINISH ); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
       

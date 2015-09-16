@@ -100,7 +100,7 @@ handleSliderBar()
       sz += sliderBar( F("IdData0"), F("Percent:"), 10, 90, 1, 50, F("%") );
       sz += wprintln( F("</center>") );
       
-      sz += wprint( "", true ); // Final Packet
+      sz += wprint( "", SEND_FINISH ); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
       

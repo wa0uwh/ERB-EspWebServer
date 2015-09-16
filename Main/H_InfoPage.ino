@@ -105,7 +105,7 @@ infoPage()
 //        sz += wSendStr_P( TEST_10Kb );   // A 10Kb Test
 //        sz += wSendStr_P( TEST_10Kb );   // A 10Kb Test
 //        sz += wSendStr_P( TEST_10Kb );   // A 10Kb Test
-//        sz += wSendStr_P( TEST_10Kb );   // A 10Kb Test\
+//        sz += wSendStr_P( TEST_10Kb );   // A 10Kb Test
 //        sz += wprintln( );  
 //      sz += wprintln( F("</pre></blockquote>") );
 
@@ -146,9 +146,9 @@ handleInfoPage()
       sz += wprintln( F("Content-Type: text/html") );
       sz += wprintln( );
       
-      sz = infoPage();
+      sz += infoPage();
    
-      sz += wprint( "", true); // Final Packet
+      sz += wprint( "", SEND_FINISH); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
     

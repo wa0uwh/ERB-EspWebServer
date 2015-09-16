@@ -286,7 +286,7 @@ handleClock()
       
       sz += clockGauge( 200, 200 );
       
-      sz += wprint( "", true); // Final Packet
+      sz += wprint( "", SEND_FINISH); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
 

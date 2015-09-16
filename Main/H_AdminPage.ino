@@ -32,7 +32,7 @@ adminPage()
     
     // Parse Args
     for ( byte i = 0; i < gServer.args(); i++ ) {
-       if (gServer.argName(i) == F("AutoAdminRefresh") ) gAutoAdminRefresh = constrain (gServer.arg(i).toInt(), 120, 600);
+       if (gServer.argName(i) == F("AutoAdminRefresh") ) gAutoAdminRefresh = constrain (gServer.arg(i).toInt(), 60, 600);
     }
     
     // Generate Html Header
@@ -59,7 +59,7 @@ adminPage()
     if (gAutoAdminRefresh > 0 ) {
       sz += wprintln( );
       sz += wprintln( F("<!-- SliderBar1 -->") );
-      sz += sliderBar( F("AutoAdminRefresh"), F("Interval:"), 180, 600, 10, gAutoAdminRefresh, F("Sec"), F("/admin") );
+      sz += sliderBar( F("AutoAdminRefresh"), F("Interval:"), 60, 600, 10, gAutoAdminRefresh, F("Sec"), F("/admin") );
       sz += wprintln( F("<br>") );
     }
     sz += wprintln( F("<br>") );
@@ -138,7 +138,7 @@ handleAdminPage()
       
       sz += adminPage();
     
-      sz += wprint( "", true ); // Final Packet
+      sz += wprint( "", SEND_FINISH ); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
       
