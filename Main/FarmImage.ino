@@ -32,7 +32,7 @@ farmImage()
     
     DEBUG_MONITOR_REPORT_ARGS();
 
-    sz += wSendBuf_P(gFarm01, sizeof(gFarm01), true);
+    sz += wSendBuf_P(gFarm01, sizeof(gFarm01));
     
     DEBUG_MONITOR_REPORT_END();
     
@@ -62,7 +62,7 @@ handleFarmImage()
  
       sz += farmImage();
            
-      sz += wprint( "", true ); // Final Packet
+      sz += wprint( "", SEND_FINISH ); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
       

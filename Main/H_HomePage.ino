@@ -32,7 +32,7 @@ homePage()
 
     // Parse Args
     for ( byte i = 0; i < gServer.args(); i++ ) {
-       if (gServer.argName(i) == F("AutoHomeRefresh") ) gAutoHomeRefresh = constrain (gServer.arg(i).toInt(), 120, 600);
+       if (gServer.argName(i) == F("AutoHomeRefresh") ) gAutoHomeRefresh = constrain (gServer.arg(i).toInt(), 60, 600);
     }
     
     // Generate Html Header
@@ -68,7 +68,7 @@ homePage()
     if (gAutoHomeRefresh > 0 ) {
       sz += wprintln( );
       sz += wprintln( F("<!-- SliderBar1 -->") );
-      sz += sliderBar( F("AutoHomeRefresh"), F("Interval:"), 180, 600, 10, gAutoHomeRefresh, F("Sec"), F("/home") );
+      sz += sliderBar( F("AutoHomeRefresh"), F("Interval:"), 60, 600, 10, gAutoHomeRefresh, F("Sec"), F("/home") );
       sz += wprintln( F("<br>") );
     }
     sz += wprintln( F("<br>") );
@@ -149,6 +149,7 @@ homePage()
         sz += wprintln(  F("<br>") );
         sz += wprintln(  F("<b>Example:") );
         sz += wprintln(  F("<a href='/freeheap.svg'>Line</a> FreeHeap Graphic") );
+        sz += wprintln(  F("</b>") );
         sz += wprintln(  F("<br>") );
         sz += wprintln( sF("Range: ") + String( FreeHeapScaleLo/1000 ) + F("KB to ") + String( FreeHeapScaleHi/1000 ) + F("KB") );
         sz += wprintln(  F("<br>") );
@@ -157,7 +158,6 @@ homePage()
         sz += wprintln(  F("Down Tick marks Start of Web Page Link, Up Tick marks End of Page") );
         sz += wprintln(  F("<br>") );
         sz += wprintln(  F("Horizontal Sustained Level, is Normal Idle") );
-        sz += wprintln(  F("</b>") );
     }
     sz += wprintln( F("</center>") );
     sz += wprintln( F("<br>") );
@@ -241,7 +241,7 @@ handleHomePage()
       
       sz += homePage();
     
-      sz += wprint( "", true ); // Final Packet
+      sz += wprint( "", SEND_FINISH ); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
      

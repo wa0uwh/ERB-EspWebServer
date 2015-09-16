@@ -104,10 +104,10 @@ handleBar()
       sz += wprintln( ); // A Blank Line
             
       sz += wprintln( F("<center>") );
-      sz = barGraphic();      
+      sz += barGraphic();      
       sz += wprintln( F("</center>") );
       
-      sz += wprint( "", true ); // Final Packet
+      sz += wprint( "", SEND_FINISH ); // Final Packet
 
       DEBUG_MONITOR_REPORT_TOTAL();
 
