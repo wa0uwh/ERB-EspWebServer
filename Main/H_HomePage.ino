@@ -149,6 +149,7 @@ homePage()
         sz += wprintln(  F("<br>") );
         sz += wprintln(  F("<b>Example:") );
         sz += wprintln(  F("<a href='/freeheap.svg'>Line</a> FreeHeap Graphic") );
+        sz += wprintln(  F("</b>") );
         sz += wprintln(  F("<br>") );
         sz += wprintln( sF("Range: ") + String( FreeHeapScaleLo/1000 ) + F("KB to ") + String( FreeHeapScaleHi/1000 ) + F("KB") );
         sz += wprintln(  F("<br>") );
@@ -157,7 +158,6 @@ homePage()
         sz += wprintln(  F("Down Tick marks Start of Web Page Link, Up Tick marks End of Page") );
         sz += wprintln(  F("<br>") );
         sz += wprintln(  F("Horizontal Sustained Level, is Normal Idle") );
-        sz += wprintln(  F("</b>") );
     }
     sz += wprintln( F("</center>") );
     sz += wprintln( F("<br>") );

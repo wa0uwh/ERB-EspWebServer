@@ -1,4 +1,4 @@
-//  Main
+//  MainNS
 
 
 #include "AA_Main.h"
@@ -16,7 +16,7 @@ extern "C" {
     uint16 readvdd33(void);
 }
 
-const char *gRev = "ERB_MF_13";  // Software Revision Code
+const char *gRev = "ERB_MG";  // Software Revision Code
 
 
 
@@ -42,12 +42,11 @@ const char COPYRIGHT1[] PROGMEM = R"(
 )";
 
 
-
 // Note: By my convention, All Global Variables and Constants start with a letter "g".
 
 
 String gSsid = "EBCON";        // Change to your SSID
-//String gPasswd = "........";   // Change to your Passwd
+String gPasswd = "........";   // Change to your Passwd
 
 
 String gSsidPrev = gSsid;

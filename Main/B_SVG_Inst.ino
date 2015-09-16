@@ -265,7 +265,7 @@ instGauge( int w = 200, int h = 200)
         sz += wprintln(  F("  <text x='-30' y='+14' font-size='10'>(K)</text>") );       
         sz += wprintln(  F("  <text x='+30' y='-3'  font-size='10'>VDD</text>") );       
         sz += wprintln(  F("  <text x='+30' y='+8'  font-size='10'>(Volts)</text>") );      
-        sz += wprintln(  F("  <text x='+00' y='+80' font-size='08'>WA0UWH</text>") );
+        sz += wprintln(  F("  <text x='+00' y='+75' font-size='10'>WA0UWH</text>") );
         
         // Center of Inst
         sz += wprintln(  F("  <use xlink:href='#instFace' transform='scale(0.12, 0.60)'/>") );
