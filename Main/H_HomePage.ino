@@ -32,7 +32,7 @@ homePage()
 
     // Parse Args
     for ( byte i = 0; i < gServer.args(); i++ ) {
-       if (gServer.argName(i) == F("AutoHomeRefresh") ) gAutoHomeRefresh = constrain (gServer.arg(i).toInt(), 60, 600);
+       if (gServer.argName(i) == F("AutoHomeRefresh") ) gAutoHomeRefresh = constrain (gServer.arg(i).toInt(), 10, 600);
     }
     
     // Generate Html Header
@@ -68,7 +68,7 @@ homePage()
     if (gAutoHomeRefresh > 0 ) {
       sz += wprintln( );
       sz += wprintln( F("<!-- SliderBar1 -->") );
-      sz += sliderBar( F("AutoHomeRefresh"), F("Interval:"), 60, 600, 10, gAutoHomeRefresh, F("Sec"), F("/home") );
+      sz += sliderBar( F("AutoHomeRefresh"), F("Interval:"), 10, 600, 10, gAutoHomeRefresh, F("Sec"), F("/home") );
       sz += wprintln( F("<br>") );
     }
     sz += wprintln( F("<br>") );

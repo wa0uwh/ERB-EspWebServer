@@ -29,7 +29,7 @@ initWifiAp()
     //WiFi.softAP( gDeviceName, "passwd1234", gApChannel );
     WiFi.softAP( gDeviceName, 0, gApChannel );  // For Open AP Network
     yield();
-    Serial.println ( F("\nInitilize AP") );
+    Serial.println ( F("\nInitilize: AP Mode") );
     
     initHandlers();
     startWebServer(); 
@@ -51,7 +51,7 @@ restartWifiAp()
     //gApKeepLive = true;
     gApTimeout = millis() + 15 * MINs;
     WiFi.mode( WIFI_AP_STA );
-    Serial.println ( F("\n\nReStarting AP") );
+    Serial.println ( F("\n\nReStarting: AP Mode") );
     yield();
 }
 
@@ -107,7 +107,6 @@ try2StartWifiStn()
     gWifiStnAttempts = 0;
     gWifiReStarts++;
     
-    
     // Create Node Name from Least Digits of IPA
     sprintf(gDeviceName+3, FMT("%0d"), WiFi.localIP() >> 24);              // Append Least IP Digits at position 3
     
@@ -119,6 +118,8 @@ try2StartWifiStn()
     Serial.println ( sF("Soft AP  Mac Address: ") + mac2str(WiFi.softAPmacAddress(gMacBuf)) );
     Serial.println ( sF("WiFi ReStarts: ")        + String(gWifiReStarts) );
     yield(); 
+
+    restartWifiAp();
     
     Serial.println (); Serial.println ();
     WiFi.printDiag(Serial);

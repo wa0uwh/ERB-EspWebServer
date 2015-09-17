@@ -16,7 +16,7 @@ extern "C" {
     uint16 readvdd33(void);
 }
 
-const char *gRev = "ERB_MG";  // Software Revision Code
+const char *gRev = "ERB_MH";  // Software Revision Code
 
 
 
@@ -155,7 +155,8 @@ setup ( void )
     pinMode ( gGrnLED, OUTPUT ); digitalWrite ( gGrnLED, OFF );
     pinMode ( gBluLED, OUTPUT ); digitalWrite ( gBluLED, OFF );
     
-    // Create a "gDeviceName" from chip_id, this could be the MAC address, or the least digits of the Chip ID, (or anything you like)
+    // Create a "gDeviceName" from chip_id, this could be the MAC address, or the least digits
+    // of the Chip ID, (or anything you like)
     // Also, See: try2StartWifiStn() for using Least Digits of IPA
     // sprintf(gDeviceName+3, FMT("%04d"), ESP.getChipId() % 10000); // Append ID Number at position 3
     sprintf(gDeviceName+3, FMT("%X"), ESP.getChipId());              // Append Hex ID Number at position 3
@@ -183,7 +184,7 @@ loop ( void )
       
       gServer.handleClient(); 
       
-      // Short Cut the Loop, so Support Tasks only run once per second
+      // ShortCut the Loop, so Support Tasks only run once per second
       // This keeps the "loop" very fast most of the time, which is needed
       // for WIFI processes.
       if (gOneSecSchedule > millis()) return;
@@ -197,17 +198,21 @@ loop ( void )
       if ( gReStartSTN == true  ) {
         try2StartWifiStn();
       }
-   
+
       if ( gStnLive == true ) {
-        if ( gApTimeout && millis() > gApTimeout ) WiFi.mode(WIFI_STA);  // After AP Timeout, Switch to STN-only mode    
+        if ( gApTimeout && millis() > gApTimeout ) {
+          WiFi.mode(WIFI_STA);  // After AP Timeout, Switch to STN-only mode
+          Serial.println ( F("\nEnd: AP Mode") );
+          gApTimeout = 0;
+        }
         updateMDNS();  // Scheduled MDNS Update
         updateNTP();   // Scheduled NTP Update
       }
-      
+
       digitalWrite ( gGrnLED, ON );  // Show Loop Activity
-      // The following provides enough time for a quick LED Blink 
-      logFreeHeap();       // This logs data for the Free Heap Display
-      logPseudoLoadAvg();  // This logs data for the Pseudo Load Average
+        // The following provides enough time for a quick LED Blink
+        logFreeHeap();       // This logs data for the Free Heap Display
+        logPseudoLoadAvg();  // This logs data for the Pseudo Load Average
       digitalWrite ( gGrnLED, OFF );
 
       // Dubug
