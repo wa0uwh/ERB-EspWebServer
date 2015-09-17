@@ -53,15 +53,17 @@ infoPage()
       sz += wprintln( F("<blockquote><pre>") );
         sz += wSendStr_P( INTRODUCTION );
         sz += wprintln( );
+        sz += wSendStr_P( THIS_APP_WIFI_SEND_API );
+        sz += wprintln( );
       sz += wprintln( F("</pre></blockquote>") );
-      
+
       sz += wprintln( );
       sz += wprintln( F("<!-- Esp8266 Server Photo -->") );
       sz += wprintln( F("<center>") );
       {
         sz += wprintln( F("<b>Esp8266 WEB Server Farm</b>") );
         sz += wprintln( F("<table><tr><td align='center'>") );
-        
+
           sz += wprint  ( F("<a href='http://goo.gl/6iaPMf'>") );
           sz += wprint  ( F("<img") );
           sz += wprint  ( F(" src='http://goo.gl/6iaPMf'") ); // Photo Src
@@ -70,9 +72,8 @@ infoPage()
           sz += wprintln( F("</a>") );
           sz += wprintln( F("<br><b>(Image From Google)</b>") );
 
-    
           sz += wprintln( F("</td><td align='center'>") );
-          
+
           sz += wprint  ( F("<a href='/farm01.jpg'>") );
           sz += wprint  ( F("<img") );
           sz += wprint  ( F(" src='/farm01.jpg'") ); // Photo Src
@@ -80,11 +81,11 @@ infoPage()
           sz += wprint  ( F(" width='500'>") );
           sz += wprintln( F("</a>") );
           sz += wprintln( F("<br><b>(Image From Esp8266)</b>") );
-        
+
         sz += wprintln( F("</td></tr></table>") );
       }
       sz += wprintln( F("</center>") );
-      
+
       sz += wprintln( );
       sz += wprintln( F("<br>") ); 
       sz += wprintln( F("<!-- Copyright -->") );

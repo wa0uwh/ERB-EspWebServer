@@ -14,36 +14,15 @@
  * See also Arduino IDE, at: https://github.com/esp8266/Arduino
  */
 
-/*
- * These Send Functions provide the WIFI Send Functions (APIs) for the rest of the Sketch.
- * 
- * Each API is written dependent on a Lower Level APIs, with only one API actually sending 
- *    data to WIFI.
- *    
- * The APIs are listed 'Lowest' to 'Highest" with their data flow dependence, they are:
- *
- *    _wSendCBuf();
- *         gServer.client().write();
- *
- *    _wprintstr();
- *        _wSendCBuf();   
- *
- *    wprint();
- *        _wSendCBuf();
- *
- *    wprintln();
- *        wprint();
- *
- *    wSendBuf_P();
- *        wprint();
- *        _wSendCBuf_();
- *
- *    wSendStr_P();
- *        wprint();
- * 
- * 
- *    
- */
+#include "AA_UtilsSend.h"
+
+// ###########################################################
+//////////////////////////////////////////////////////////////
+//
+// This is a Private String-Buffer, used to build "Blocks" of Data
+//
+String _WifiBuf = ""; // The Private WIFI Transfer Buffer
+//
 
 
 // ###########################################################
@@ -76,6 +55,7 @@ _wSendCBuf(const char* apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
       if (size2Send > 1460) size2Send = 1460;
       sentSizeTmp = gServer.client().write(apBuf + p, size2Send);
       Serial.println ( sF(" Wifi, Sent Buf Size: ") + String(sentSizeTmp) );
+      yield();
 
       if (sentSizeTmp > 0) {
           ErrorLoops = 0;
@@ -115,13 +95,11 @@ _wSendCBuf(const char* apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
 // ###########################################################
 //////////////////////////////////////////////////////////////
 //
-String _WifiBuf = ""; // The Private WIFI Transfer Buffer
-//
 // This is a Private String-Buffer Function, used to build "Blocks" of Data
 //
 long
 //ICACHE_FLASH_ATTR
-_wprintstr(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
+_wBufStr(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 { 
     long sz = 0;
 
@@ -154,7 +132,7 @@ long
 //ICACHE_FLASH_ATTR
 wprint(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 {
-    return _wprintstr( aStr, aFinish );
+    return _wBufStr( aStr, aFinish );
 }
 
 // ###########################################################
@@ -178,7 +156,7 @@ wprintln(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 //
 long
 //ICACHE_FLASH_ATTR
-wSendBuf_P(PGM_P apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
+wSendCBuf_P(PGM_P apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
 { 
   
       long sz = 0;

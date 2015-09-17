@@ -32,7 +32,7 @@ farmImage()
     
     DEBUG_MONITOR_REPORT_ARGS();
 
-    sz += wSendBuf_P(gFarm01, sizeof(gFarm01));
+    sz += wSendCBuf_P(gFarm01, sizeof(gFarm01));
     
     DEBUG_MONITOR_REPORT_END();
     
