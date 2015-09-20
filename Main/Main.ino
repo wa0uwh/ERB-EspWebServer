@@ -25,7 +25,7 @@
 
 #include "A1_UserConfig.h"
 
-const char *gRev = "ERB_MI";  // Software Revision Code
+const char *gRev = "ERB_MJ";  // Software Revision Code
 
 
     String gSsidPrev = gSsid;
