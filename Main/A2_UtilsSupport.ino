@@ -23,7 +23,7 @@ long
 ICACHE_FLASH_ATTR
 htmlPageHeader( String aTitle, int aAutoRefresh = 0, String aURL = "/" )
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     gPageStartTime = millis();
     
@@ -56,7 +56,7 @@ long
 ICACHE_FLASH_ATTR
 htmlPageTitle( String aNodeName, String aTitle )
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     sz += wprintln( F("<center><h1>") );
     sz += wprintln( String(aNodeName) );
     sz += wprintln( F(" - ") );
@@ -75,41 +75,41 @@ long
 ICACHE_FLASH_ATTR
 htmlPageFooter()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     sz += wprintln( );
     sz += wprintln( F("<!-- Footer -->") );
     sz += wprintln( F("<center>") );
-    sz += wprintln( F("<hr width='90%'> ") );
-    
-    sz += wprintln( F("Created at: <b>") );
-    sz += wprint  ( String ( (gSentSize / ((millis() - gPageStartTime)/1000.0)/1000.0), 1 ) );
-    sz += wprint  ( F("</b> MB/Sec") );
-    sz += wprint  ( F(" - <b>") );
-    sz += wprint  ( String ( (millis() - gPageStartTime)/1000.0, 3 ) );
-    sz += wprint  ( F("</b> CPU Secs - <b>") );
-    sz += wprint  ( gLoadAvgS );  // Pseudo Load Average
-    sz += wprintln( F("</b> LoadAvg (pseudo)") );
-    sz += wprintln( F("<br>") );
-    sz += wprintln( F("<br>") );
-    
-    sz += wprintln( F("Powered by: <a href='http://espressif.com/'>Esp8266</a>") );
-    sz += wprintln( F("<br>") );
+      sz += wprintln( F("<hr width='90%'> ") );
 
-    sz += wprintln( F("Contact Mgr at: <a href='tel://202-555-1212'>202-555-1212</a>") );
-    sz += wprintln( F("<br>") );
-    
-    sz += wprintln( F("<a href='/info'>Copyright 2015</a>") );    
-    sz += wprintln( F("<br>") );
-    
-    sz += wprintln( F("<br>-") );
+      sz += wprintln( F("Created at: <b>") );
+      sz += wprint  ( String ( (gSentSize / ((millis() - gPageStartTime)/1000.0)/1000.0), 1 ) );
+      sz += wprint  ( F("</b> MB/Sec") );
+      sz += wprint  ( F(" - <b>") );
+      sz += wprint  ( String ( (millis() - gPageStartTime)/1000.0, 3 ) );
+      sz += wprint  ( F("</b> CPU Secs - <b>") );
+      sz += wprint  ( gLoadAvgS );  // Pseudo Load Average
+      sz += wprintln( F("</b> LoadAvg (pseudo)") );
+      sz += wprintln( F("<br>") );
+      sz += wprintln( F("<br>") );
+
+      sz += wprintln( F("Powered by: <a href='http://espressif.com/' target='MFG'>Esp8266</a>") );
+      sz += wprintln( F("<br>") );
+
+      sz += wprintln( F("Contact Mgr at: <a href='tel://202-555-1212'>202-555-1212</a>") );
+      sz += wprintln( F("<br>") );
+
+      sz += wprintln( F("<a href='/info''>Copyright 2015</a>") );
+      sz += wprintln( F("<br>") );
+
+      sz += wprintln( F("<br>-") );
     sz += wprintln( F("</center>") );
-    
+
     sz += wprintln( );
     sz += wprintln( F(" <!-- Trailer -->") );
     sz += wprintln( F(" </body>") );
     sz += wprintln( F("</html>") );
-    
+
     return sz;
 }
 
@@ -256,6 +256,7 @@ ipa2str( IPAddress ipa )
 // Logs the FreeHeap Data, this is called periodically
 //
 int
+//ICACHE_FLASH_ATTR
 logFreeHeap()
 {
   gFreeHeapLog[gFreeHeapLogIndex++ % sizeof(gFreeHeapLog)] = (byte) constrain(ESP.getFreeHeap()/100, 0, 255);
@@ -268,6 +269,7 @@ logFreeHeap()
 // Creates/Inserts a Tick Mark in the FreeHeap Data Record
 //
 int
+//ICACHE_FLASH_ATTR
 _logFreeHeapMark(int aDir)
 {
     // Insert a visible Mark in the Free Heap Log
@@ -285,6 +287,7 @@ _logFreeHeapMark(int aDir)
 // Marks the End of a Web Page in Free Heap Log
 //
 int
+//ICACHE_FLASH_ATTR
 logFreeHeapMarkUp()
 {
     // Put a visible Mark "up" in the Free Heap Log
@@ -298,6 +301,7 @@ logFreeHeapMarkUp()
 // Marks the Beginning of a Web Page in Free Heap Log
 //
 int
+//ICACHE_FLASH_ATTR
 logFreeHeapMarkDn() 
 {
     // Put a visible Mark "dn" in the Free Heap Log

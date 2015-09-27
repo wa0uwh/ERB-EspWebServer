@@ -20,6 +20,7 @@
 //
 //
 void
+ICACHE_FLASH_ATTR
 redLed(boolean state)
 {
   gRedLedState = state;
@@ -32,6 +33,7 @@ redLed(boolean state)
 //
 //
 void
+ICACHE_FLASH_ATTR
 redLed_toggle()
 {
   gRedLedState = !gRedLedState;

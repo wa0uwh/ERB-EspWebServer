@@ -106,6 +106,7 @@ getEpochDelta()
 //////////////////////////////////////////////////////////////
 //
 unsigned long
+ICACHE_FLASH_ATTR
 epoch()
 {
   if (gEpochDelta) return gEpochDelta + upTime();
@@ -135,6 +136,7 @@ updateNTP()
 //////////////////////////////////////////////////////////////
 //   
 String &
+ICACHE_FLASH_ATTR
 timeUTC(String & timeBuf, unsigned long timezone)
 {
     

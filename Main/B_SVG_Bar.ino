@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 barGraphic()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size 
     
     DEBUG_MONITOR_REPORT_START();
     
@@ -92,7 +92,7 @@ ICACHE_FLASH_ATTR
 handleBar()
 {
     
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );

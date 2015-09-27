@@ -25,7 +25,7 @@
 
 #include "A1_UserConfig.h"
 
-const char *gRev = "ERB_MJ";  // Software Revision Code
+const char *gRev = "ERB_MK";  // Software Revision Code
 
 
     String gSsidPrev = gSsid;
@@ -142,12 +142,13 @@ loop ( void )
       
       gServer.handleClient(); 
       
-      // ShortCuts the Loop, so Support Tasks only run once per second
+      // This shortCuts the Loop, so Support Tasks only run once per second
       // This keeps the "loop" very fast most of the time, which is needed
       // for WIFI processes.
       if (gOneSecSchedule > millis()) return;
 
 
+      // The following are Support Tasks
       
       gOneSecSchedule += 1 * SECs;
       gUpTimeSec++;

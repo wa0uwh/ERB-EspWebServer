@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 sliderBar(  String aId = "Id0", String aLabel = "Label0", int aMin = 0, int aMax = 100, int aStp = 5, int aVal = 50, String aUnits = "", String aBaseURI = "/")
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     DEBUG_MONITOR_REPORT_START();
     
@@ -59,12 +59,12 @@ sliderBar(  String aId = "Id0", String aLabel = "Label0", int aMin = 0, int aMax
         sz += wprint  ( sF("  id='") + String( aId ) + F("_display'>") + String( aVal ) );
         sz += wprintln( sF("</output>") + String( aUnits ) );
         
-        sz += wprintln( sF("<input type='submit' value='GO'>") );
+        sz += wprintln(  F("<input type='submit' value='GO'>") );
         
 //        sz += wprintln(  );
 //        sz += wprint  ( sF("<output for='") + String( aId ) + F("'") );
 //        sz += wprint  ( sF("  id='") + String( aId ) + F("_action'>") + String( aVal ) );
-//        sz += wprintln( sF("</output>"));
+//        sz += wprintln(  F("</output>"));
      
 //        sz += wprintln(  F("<br>(Not Working Yet)") );
     }
@@ -85,7 +85,7 @@ void
 ICACHE_FLASH_ATTR
 handleSliderBar()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );

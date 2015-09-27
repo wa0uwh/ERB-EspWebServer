@@ -26,7 +26,7 @@ long
 ICACHE_FLASH_ATTR
 farmImage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     DEBUG_MONITOR_REPORT_START();
     
@@ -49,7 +49,7 @@ void
 ICACHE_FLASH_ATTR
 handleFarmImage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );

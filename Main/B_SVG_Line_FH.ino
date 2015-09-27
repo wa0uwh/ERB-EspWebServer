@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 lineGraphicFH( int w = 400, int h = 150 )
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     int Lo = FreeHeapScaleLo/100;
     int Hi = FreeHeapScaleHi/100;
@@ -37,7 +37,7 @@ lineGraphicFH( int w = 400, int h = 150 )
     sz += wprintln(  F("<!-- Graphic -->") );
     
     // SVG Header
-    sz += wprintln( sF("<svg ") );
+    sz += wprintln(  F("<svg ") );
     sz += wprintln( sF(" width='") + String(w) + F("' height='") + String(h) + F("'") );
     sz += wprintln(  F(" xmlns='http://www.w3.org/2000/svg'") );
     sz += wprintln(  F(" xmlns:xlink='http://www.w3.org/1999/xlink'") );
@@ -139,7 +139,7 @@ void
 ICACHE_FLASH_ATTR
 handleLineGraphFH()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
       
     digitalWrite ( gBluLED, ON );

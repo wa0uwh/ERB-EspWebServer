@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 scanWifi()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     DEBUG_MONITOR_REPORT_START();
     

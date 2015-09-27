@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 homePage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
 
     DEBUG_MONITOR_REPORT_START();
     
@@ -105,14 +105,14 @@ homePage()
       sz += wprintln( F("<!-- Ramdom Line Graphic -->") );
       sz += wprintln( F("<center>") );
       {
-          sz += wprintln( F("<a href='/test.svg'>") );
+          sz += wprintln( F("<a href='/test.svg' target='test.svg'>") );
           sz += lineGraphic();
           sz += wprintln( F("</a>") );
           
           sz += wprintln( );
           sz += wprintln( F("<br>") );
           sz += wprintln( F("<b>Example: Random") );
-          sz += wprintln( F("<a href='/test.svg'>Line</a> Graphic</b>") );
+          sz += wprintln( F("<a href='/test.svg' target='test.svg'>Line</a> Graphic</b>") );
       }
       sz += wprintln( F("</center>") );
       sz += wprintln( F("<br>") );
@@ -130,7 +130,7 @@ homePage()
         sz += wprintln( );
         sz += wprintln( F("<br>") );
         sz += wprintln( F("<b>Example:") );
-        sz += wprintln( F("<a href='/bar.svg'>Bar</a> Graphic</b>") );
+        sz += wprintln( F("<a href='/bar.svg' target='bar.svg'>Bar</a> Graphic</b>") );
     }
     sz += wprintln( F("</center>") );
     sz += wprintln( F("<br>") );
@@ -141,14 +141,14 @@ homePage()
     sz += wprintln( F("<!-- Free Heap Graphic -->") );
     sz += wprintln( F("<center>") );
     {
-        sz += wprintln( sF("<a href='/freeheap.svg'>") );
+        sz += wprintln(  F("<a href='/freeheap.svg' target='freeheap.svg'>") );
         sz += lineGraphicFH();
         sz += wprintln(  F("</a>") );
         
         sz += wprintln( );
         sz += wprintln(  F("<br>") );
         sz += wprintln(  F("<b>Example:") );
-        sz += wprintln(  F("<a href='/freeheap.svg'>Line</a> FreeHeap Graphic") );
+        sz += wprintln(  F("<a href='/freeheap.svg' target='freeheap.svg'>Line</a> FreeHeap Graphic") );
         sz += wprintln(  F("</b>") );
         sz += wprintln(  F("<br>") );
         sz += wprintln( sF("Range: ") + String( FreeHeapScaleLo/1000 ) + F("KB to ") + String( FreeHeapScaleHi/1000 ) + F("KB") );
@@ -170,16 +170,16 @@ homePage()
     {
         // SVG_Inst Graphic
         sz += wprintln( F("<!-- Inst Graphic -->") );
-        sz += wprintln( F("<a href='/inst.svg'><img src='/inst.svg' width='200' hight='200' alt='Buffering'/></a>") );
+        sz += wprintln( F("<a href='/inst.svg' target='inst.svg'><img src='/inst.svg' width='200' hight='200' alt='Buffering'/></a>") );
         
         // SVG_Clock Graphic
         sz += wprintln( F("<!-- Clock Graphic -->") );
-        sz += wprintln( F("<a href='/clock.svg'><img src='/clock.svg' width='200' hight='200' alt='Buffering'/></a>") );
+        sz += wprintln( F("<a href='/clock.svg' target='clock.svg'><img src='/clock.svg' width='200' hight='200' alt='Buffering'/></a>") );
         
         sz += wprintln( );
         sz += wprintln( F("<br>") );
         sz += wprintln( F("<b>Example:") );
-        sz += wprintln( F("<a href='/inst.svg'>Inst</a> and <a href='/clock.svg'>Clock</a> Graphics</b>") );
+        sz += wprintln( F("<a href='/inst.svg' target='inst.svg'>Inst</a> and <a href='/clock.svg' target='clock.svg'>Clock</a> Graphics</b>") );
 
         // Provide Optional Visitor Map
         sz += visitorMap();
@@ -199,11 +199,12 @@ homePage()
         sz += wprintln( sF("    Free Heap Size: <b>")  + String(ESP.getFreeHeap() / 1000.0, 3) + F("KB</b><br>") );
         sz += wprintln( sF("    Hits: <b>")            + String(gHits) + F("</b><br>") );
         sz += wprintln( sF("    Unit ID: <b>")         + String(ESP.getChipId() / 10000.0, 4) + F("</b><br>") );
+        sz += wprintln( sF("    STN IPA: <b>")         + String(ipa2str(WiFi.localIP())) + F("</b><br>") );
         sz += wprintln( sF("    My IPA: <b>")          + String(ipa2str(gServer.client().remoteIP())) + F("</b><br>") );
         sz += wprintln( sF("    Sketch Rev: <b>")      + String(gRev) + F("</b><br>") );
         sz += wprintln(  F("  </ul>") );
         sz += wprintln(  F("</ul>") );
-        sz += wprintln( F("<br>") );
+        sz += wprintln(  F("<br>") );
     }
 
     // Generate Html Footer
@@ -226,7 +227,7 @@ void
 ICACHE_FLASH_ATTR
 handleHomePage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     gCurrentPage = HOMEPAGE;

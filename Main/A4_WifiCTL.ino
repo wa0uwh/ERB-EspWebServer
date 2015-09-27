@@ -48,11 +48,12 @@ void
 restartWifiAp()
 {
     
-    //gApKeepLive = true;
     gApTimeout = millis() + 15 * MINs;
     WiFi.mode( WIFI_AP_STA );
-    Serial.println ( F("\n\nReStarting: AP Mode") );
+    //WiFi.softAP( gDeviceName, "passwd1234", gApChannel );
+    WiFi.softAP( gDeviceName, 0, gApChannel );  // For Open AP Network
     yield();
+    Serial.println ( F("\n\nReStarting: AP Mode") );
 }
 
 
