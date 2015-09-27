@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 lineGraphic( int w = 300, int h = 100 )
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     DEBUG_MONITOR_REPORT_START();
     
@@ -80,7 +80,7 @@ void
 ICACHE_FLASH_ATTR
 handleLineGraph()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );

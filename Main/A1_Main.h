@@ -71,6 +71,7 @@ const char INTRODUCTION[] PROGMEM = R"(
      *      Home Page Dashboard
      *      Help Page
      *      Admin Page, with WiFi Scan and Network Selection
+     *      Info Page
      *      Page Navigator and Resource Links
      *      Raw Data Query
      *      NTP Network Time (Unix Epoch)

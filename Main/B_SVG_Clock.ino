@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 clockGauge(int w = 200, int h = 200)
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
 
     DEBUG_MONITOR_REPORT_START();
     
@@ -274,7 +274,7 @@ void
 ICACHE_FLASH_ATTR
 handleClock() 
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );

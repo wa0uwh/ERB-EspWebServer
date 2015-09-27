@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 visitorMap() {
 
-  long sz = 0;
+  long sz = 0; // Sent Size
   
         DEBUG_MONITOR_REPORT_START();
     
@@ -59,7 +59,11 @@ visitorMap() {
           }
         }   
         sz += wprintln(  F("<br>") );
-        sz += wprint  (  F("<b>World Wide Esp8266 Shared Visitor Map</b>") );
+        sz += wprint  (  F("<b>World Wide Esp8266 Shared </b>") );
+        sz += wprintln(  F("<a href='/visitormap' target='visitormap'>Visitor Map</a>, and </b>") );
+        sz += wprint  (  F("<a href='https://www.revolvermaps.com/?target=enlarge&i=") );
+        sz += wprint  ( gVisitorMapIdKey.length() > 0 ? gVisitorMapIdKey : gSharedVisitorMapIdKey );
+        sz += wprintln(  F("' target='visitormapstats'>Stats</a></b>") );
         sz += wprintln( sF("<form method='GET' action='/") + String((gVisitorMapState == true) ? "off" : "on") + F("/vismap'>") );
         sz += wprint  (  F("<b>Map</b> -&gt;") );
         sz += wprintln( sF(" <input type='submit' name='' value='") + String((gVisitorMapState == true) ? "OFF" : "ON") + F("' />") );
@@ -86,7 +90,7 @@ void
 ICACHE_FLASH_ATTR
 handleVisitorMap()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     digitalWrite ( gBluLED, ON );

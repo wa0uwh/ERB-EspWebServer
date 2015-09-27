@@ -25,7 +25,7 @@ long
 ICACHE_FLASH_ATTR
 infoPage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     DEBUG_MONITOR_REPORT_START();
     
@@ -64,7 +64,7 @@ infoPage()
         sz += wprintln( F("<b>Esp8266 WEB Server Farm</b>") );
         sz += wprintln( F("<table><tr><td align='center'>") );
 
-          sz += wprint  ( F("<a href='http://goo.gl/6iaPMf'>") );
+          sz += wprint  ( F("<a href='http://goo.gl/6iaPMf' target='farm01.jpg'>") );
           sz += wprint  ( F("<img") );
           sz += wprint  ( F(" src='http://goo.gl/6iaPMf'") ); // Photo Src
           sz += wprint  ( F(" alt='Server Photo'") );
@@ -74,7 +74,7 @@ infoPage()
 
           sz += wprintln( F("</td><td align='center'>") );
 
-          sz += wprint  ( F("<a href='/farm01.jpg'>") );
+          sz += wprint  ( F("<a href='/farm01.jpg' target='farm01.jpg'>") );
           sz += wprint  ( F("<img") );
           sz += wprint  ( F(" src='/farm01.jpg'") ); // Photo Src
           sz += wprint  ( F(" alt='Server Photo'") );
@@ -134,7 +134,7 @@ void
 ICACHE_FLASH_ATTR
 handleInfoPage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
   
     gCurrentPage = INFOPAGE;

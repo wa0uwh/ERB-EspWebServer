@@ -49,8 +49,8 @@ initHandlers()
     // Verbose Option, Hidden from HELP
     gServer.on ( "/on/vismap",      []() { gHits++; DMRAF(); gVisitorMapState = true;  pageDirector();} );
     gServer.on ( "/off/vismap",     []() { gHits++; DMRAF(); gVisitorMapState = false; pageDirector();} );
-    gServer.on ( "/a/vismap",       []() { gHits++; DMRAF(); gVisitorMapStyle = 1; pageDirector();} );
-    gServer.on ( "/b/vismap",       []() { gHits++; DMRAF(); gVisitorMapStyle = 2; pageDirector();} );
+    gServer.on ( "/a/vismap",       []() { gHits++; DMRAF(); gVisitorMapStyle = 1;     pageDirector();} );
+    gServer.on ( "/b/vismap",       []() { gHits++; DMRAF(); gVisitorMapStyle = 2;     pageDirector();} );
     
     // Verbose Option
     gServer.on ( "/t/v",           []() { gHits++; DMRAF(); toggleVerboseMode(); pageDirector();} );

@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 helpPage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     DEBUG_MONITOR_REPORT_START();
     
@@ -83,13 +83,15 @@ helpPage()
     sz += wprintln(  F("   <a href='/home'        >URL/home</a>          = Home Dashboard (with refresh)") );
     sz += wprintln(  F("   <a href='/help'        >URL/help</a>          = This Message") );
     sz += wprintln(  F("   <a href='/admin'       >URL/admin</a>         = Admin Page") );
-    sz += wprintln(  F("   <a href='/test.svg'    >URL/test.svg</a>      = Just The Test Graphic") );
-    sz += wprintln(  F("   <a href='/clock.svg'   >URL/clock.svg</a>     = Just The Test Clock Graphic") );
-    sz += wprintln(  F("   <a href='/inst.svg'    >URL/inst.svg</a>      = Just The Test Inst Graphic") );
-    sz += wprintln(  F("   <a href='/bar.svg'     >URL/bar.svg</a>       = Just The Test Bar Graphic, Note: This is not Actually an SVG") );
-    sz += wprintln(  F("   <a href='/sliderbar'   >URL/sliderbar</a>     = Just The Test SliderBar Graphic") );
-    sz += wprintln(  F("   <a href='/visitormap'  >URL/visitormap</a>    = Just The Test VisitorMap Graphic") );
-    sz += wprintln(  F("   <a href='/farm01.jpg'  >URL/farm01.jpg</a>    = Just The Test Esp Web Server Farm Image") );
+    sz += wprintln(  F("   <a href='/info'        >URL/info</a>          = General Information Page") );
+    
+    sz += wprintln(  F("   <a href='/test.svg'   target='test.svg'     >URL/test.svg</a>      = Just The Test Graphic") );
+    sz += wprintln(  F("   <a href='/clock.svg'  target='clock.svg'    >URL/clock.svg</a>     = Just The Test Clock Graphic") );
+    sz += wprintln(  F("   <a href='/inst.svg'   target='inst.svg'     >URL/inst.svg</a>      = Just The Test Inst Graphic") );
+    sz += wprintln(  F("   <a href='/bar.svg'    target='bar.svg'      >URL/bar.svg</a>       = Just The Test Bar Graphic, Note: This is not Actually an SVG") );
+    sz += wprintln(  F("   <a href='/sliderbar'  target='sliderbar'    >URL/sliderbar</a>     = Just The Test SliderBar Graphic") );
+    sz += wprintln(  F("   <a href='/visitormap' target='visitormap'   >URL/visitormap</a>    = Just The Test VisitorMap Graphic") );
+    sz += wprintln(  F("   <a href='/farm01.jpg' target='farm01.jpg'   >URL/farm01.jpg</a>    = Just The Test Esp Web Server Farm Image") );
     sz += wprintln(  F("</ul>") );
     
     // Modes
@@ -110,50 +112,50 @@ helpPage()
     String TmpUrlIPA = sF("<a href='http://") + ipa2str(WiFi.localIP()) + "/'>" + ipa2str(WiFi.localIP()) + "</a>";
     
     sz += wprintln(  F("<ul><b>Query:</b>") );
-    sz += wprintln( sF("   <a href='/q/ssid'      >URL/q/ssid</a>        = SSID:      <b>")         + String(WiFi.SSID()) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/rssi'      >URL/q/rssi</a>        = RSSI:      <b>")         + String(WiFi.RSSI()) + F("dBm</b>") );
-    sz += wprintln( sF("   <a href='/q/mdns'      >URL/q/mdns</a>        = mDNS Name: <b>")         + String(TmpUrlNod) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/stnipa'    >URL/q/stnipa</a>      = STN IPA:   <b>")         + String(TmpUrlIPA) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/stnmac'    >URL/q/stnmac</a>      = STN Mac:   <b>")         + String(mac2str(WiFi.macAddress(gMacBuf))) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/gateway'   >URL/q/gateway</a>     = Gateway:   <b>")         + String(ipa2str(WiFi.gatewayIP())) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/netmask'   >URL/q/netmask</a>     = Netmask:   <b>")         + String(ipa2str(WiFi.subnetMask())) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/myipa'     >URL/q/myipa</a>       = My IPA:    <b>")         + String(ipa2str(gServer.client().remoteIP())) + F("</b>") );
-//  sz += wprintln( sF("   <a href='/q/myport'    >URL/q/myport</a>      = My Port:   <b>")         + String(gServer.client().remotePort()) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/ssid' target='query'      >URL/q/ssid</a>        = SSID:      <b>")         + String(WiFi.SSID()) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/rssi' target='query'      >URL/q/rssi</a>        = RSSI:      <b>")         + String(WiFi.RSSI()) + F("dBm</b>") );
+    sz += wprintln( sF("   <a href='/q/mdns' target='query'      >URL/q/mdns</a>        = mDNS Name: <b>")         + String(TmpUrlNod) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/stnipa' target='query'    >URL/q/stnipa</a>      = STN IPA:   <b>")         + String(TmpUrlIPA) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/stnmac' target='query'    >URL/q/stnmac</a>      = STN Mac:   <b>")         + String(mac2str(WiFi.macAddress(gMacBuf))) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/gateway' target='query'   >URL/q/gateway</a>     = Gateway:   <b>")         + String(ipa2str(WiFi.gatewayIP())) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/netmask' target='query'   >URL/q/netmask</a>     = Netmask:   <b>")         + String(ipa2str(WiFi.subnetMask())) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/myipa' target='query'     >URL/q/myipa</a>       = My IPA:    <b>")         + String(ipa2str(gServer.client().remoteIP())) + F("</b>") );
+//  sz += wprintln( sF("   <a href='/q/myport' target='query'    >URL/q/myport</a>      = My Port:   <b>")         + String(gServer.client().remotePort()) + F("</b>") );
     
     sz += wprintln( );
-    sz += wprintln( sF("   <a href='/q/restarts'  >URL/q/restarts</a>    = WiFi ReStarts:     <b>") + String(gWifiReStarts) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/redled'    >URL/q/redled</a>      = Red Led State:     <b>") + String(gRedLedState == ON ? "ON" : "OFF") + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/uptime'    >URL/q/uptime</a>      = Uptime Seconds:    <b>") + String(upTime()) + F("s</b>") );
-//  sz += wprintln( sF("   <a href='/q/utctime'   >URL/q/utctime</a>     = Utctime Seconds:   <b>") + String(utcTime()) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/epoch'     >URL/q/epoch</a>       = Epoch (Unix Time): <b>") + String(epoch()) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/loadavg'   >URL/q/loadavg</a>     = Load Avg (Pseudo): <b>") + String(gLoadAvgS) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/battvolt'  >URL/q/battvolt</a>    = Battery Voltage:   <b>") + String(readvdd33()/1000.0, 2) + F("V</b>") );
-    sz += wprintln( sF("   <a href='/q/freeheap'  >URL/q/freeheap</a>    = Free Heap Size:    <b>") + String(ESP.getFreeHeap() / 1000.0, 3) + F("KB</b>") );
-    sz += wprintln( sF("   <a href='/q/hits'      >URL/q/hits</a>        = Hit Counter:       <b>") + String(gHits) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/restarts' target='query'  >URL/q/restarts</a>    = WiFi ReStarts:     <b>") + String(gWifiReStarts) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/redled' target='query'    >URL/q/redled</a>      = Red Led State:     <b>") + String(gRedLedState == ON ? "ON" : "OFF") + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/uptime' target='query'    >URL/q/uptime</a>      = Uptime Seconds:    <b>") + String(upTime()) + F("s</b>") );
+//  sz += wprintln( sF("   <a href='/q/utctime' target='query'   >URL/q/utctime</a>     = Utctime Seconds:   <b>") + String(utcTime()) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/epoch' target='query'     >URL/q/epoch</a>       = Epoch (Unix Time): <b>") + String(epoch()) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/loadavg' target='query'   >URL/q/loadavg</a>     = Load Avg (Pseudo): <b>") + String(gLoadAvgS) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/battvolt' target='query'  >URL/q/battvolt</a>    = Battery Voltage:   <b>") + String(readvdd33()/1000.0, 2) + F("V</b>") );
+    sz += wprintln( sF("   <a href='/q/freeheap' target='query'  >URL/q/freeheap</a>    = Free Heap Size:    <b>") + String(ESP.getFreeHeap() / 1000.0, 3) + F("KB</b>") );
+    sz += wprintln( sF("   <a href='/q/hits' target='query'      >URL/q/hits</a>        = Hit Counter:       <b>") + String(gHits) + F("</b>") );
     
-    sz += wprintln( sF("   <a href='/q/id'        >URL/q/id</a>          = Unit ID:           <b>") + String(ESP.getChipId() / 10000.0, 4) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/idx'       >URL/q/idx</a>         = Unit ID Hex:       <b>") + String(id2hex(ESP.getChipId())) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/flashid'   >URL/q/flashid</a>     = Flash ID:          <b>") + String(ESP.getFlashChipId() / 10000.0, 4) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/flashsize' >URL/q/flashsize</a>   = Flash Size:        <b>") + String(ESP.getFlashChipSize() / 1000.0, 1) + F("KB</b>") );
-    sz += wprintln( sF("   <a href='/q/flashspd'  >URL/q/flashspd</a>    = Flash Speed:       <b>") + String(ESP.getFlashChipSpeed() / 1000000.0, 1) + F("MHz</b>") );
+    sz += wprintln( sF("   <a href='/q/id' target='query'        >URL/q/id</a>          = Unit ID:           <b>") + String(ESP.getChipId() / 10000.0, 4) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/idx' target='query'       >URL/q/idx</a>         = Unit ID Hex:       <b>") + String(id2hex(ESP.getChipId())) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/flashid' target='query'   >URL/q/flashid</a>     = Flash ID:          <b>") + String(ESP.getFlashChipId() / 10000.0, 4) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/flashsize' target='query' >URL/q/flashsize</a>   = Flash Size:        <b>") + String(ESP.getFlashChipSize() / 1000.0, 1) + F("KB</b>") );
+    sz += wprintln( sF("   <a href='/q/flashspd' target='query'  >URL/q/flashspd</a>    = Flash Speed:       <b>") + String(ESP.getFlashChipSpeed() / 1000000.0, 1) + F("MHz</b>") );
     
-    sz += wprintln( sF("   <a href='/q/rev'       >URL/q/rev</a>         = Software Revision: <b>") + String(gRev) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/rev' target='query'       >URL/q/rev</a>         = Software Revision: <b>") + String(gRev) + F("</b>") );
     sz += wprintln(  F("</ul>") );
     
     // AP Mode Querys
     sz += wprintln( );
     sz += wprintln(  F("<ul><b>AP Mode Query:</b>") );
-    sz += wprintln( sF("   <a href='/q/apssid'    >URL/q/apssid</a>      = AP SSID:           <b>") + String(gDeviceName) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/apipa '    >URL/q/apipa</a>       = AP IPA:            <b>") + String(ipa2str(WiFi.softAPIP())) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/apmac'     >URL/q/apmac</a>       = AP Mac:            <b>") + String(mac2str(WiFi.softAPmacAddress(gMacBuf))) + F("</b>") );
-    sz += wprintln( sF("   <a href='/q/apchannel' >URL/q/apchannel</a>   = AP Only Channel:   <b>") + String(gApChannel) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/apssid' target='query'    >URL/q/apssid</a>      = AP SSID:           <b>") + String(gDeviceName) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/apipa ' target='query'    >URL/q/apipa</a>       = AP IPA:            <b>") + String(ipa2str(WiFi.softAPIP())) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/apmac' target='query'     >URL/q/apmac</a>       = AP Mac:            <b>") + String(mac2str(WiFi.softAPmacAddress(gMacBuf))) + F("</b>") );
+    sz += wprintln( sF("   <a href='/q/apchannel' target='query' >URL/q/apchannel</a>   = AP Only Channel:   <b>") + String(gApChannel) + F("</b>") );
     sz += wprintln(  F("</ul>") );
     
-    // Info
+    // Information
     sz += wprintln( );
-    sz += wprintln(  F("<ul><b>Info:</b>") );
+    sz += wprintln(  F("<ul><b>Information:</b>") );
     sz += wprintln(  F("   <a href='/help'        >URL/help</a>          = This Message") );
-    sz += wprintln(  F("   <a href='/info'        >URL/info</a>          = Info and Copyright Message") );
+    sz += wprintln(  F("   <a href='/info'        >URL/info</a>          = General Information and Copyright Message") );
     sz += wprintln(  F("</ul>") );
     
     // Admin

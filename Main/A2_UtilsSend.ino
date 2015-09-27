@@ -101,7 +101,7 @@ long
 //ICACHE_FLASH_ATTR
 _wBufStr(String aStr = "", byte aFinish = SEND_WITH_BUFFERING)
 { 
-    long sz = 0;
+    long sz = 0; // Sent Size
 
     _WifiBuf += aStr;
 
@@ -159,7 +159,7 @@ long
 wSendCBuf_P(PGM_P apBuf, long aLen, byte aFinish = SEND_WITH_BUFFERING)
 { 
   
-      long sz = 0;
+      long sz = 0; // Sent Size
       
       sz += wprint( "", SEND_BUFFER_NOW ); // Send Anything already in String Buffer, First, NOW
       
@@ -180,7 +180,7 @@ wSendStr_P( PGM_P apBuf, byte aFinish = SEND_WITH_BUFFERING )
 {
 
       
-      long sz = 0;
+      long sz = 0;  // Sent Size
       long pBufLen = strlen_P(apBuf);
       char buf[1460/4 + 1];
       PGM_P pBuf = apBuf;

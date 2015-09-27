@@ -29,7 +29,7 @@
 
 
 // Time ZONE
-    const long gTimeZONE = -(7*HRs/SECs); // PDT
+    const long gTimeZONE = (-7*HRs/SECs); // PDT
 
 
 // Used to set LED state

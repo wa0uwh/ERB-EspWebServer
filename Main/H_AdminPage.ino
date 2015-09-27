@@ -24,7 +24,7 @@ long
 ICACHE_FLASH_ATTR
 adminPage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
 
     DEBUG_MONITOR_REPORT_START();
     
@@ -122,7 +122,7 @@ void
 ICACHE_FLASH_ATTR
 handleAdminPage()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     gCurrentPage = ADMINPAGE;

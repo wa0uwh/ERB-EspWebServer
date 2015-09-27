@@ -22,7 +22,7 @@ long
 ICACHE_FLASH_ATTR
 navigator( )
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     
     String timeUTCBuf = "";
     
@@ -41,12 +41,12 @@ navigator( )
     sz += wprintln( timeUTC(timeUTCBuf, gTimeZONE) ); 
     sz += wprintln( F(" PDT</td><td align='right' width='40%'>") );
     
-    sz += wprint  ( F(" | <a href='http://espressif.com/'>MFR</a>") );
-    sz += wprint  ( F(" | <a href='http://www.esp8266.com/'>Forum</a>") );
-    sz += wprint  ( F(" | <a href='http://bbs.espressif.com/'>BBS</a>") );
-    sz += wprint  ( F(" | <a href='http://neilkolban.com/tech/esp8266/'>TheBOOK</a>") );
-    sz += wprint  ( F(" | <a href='https://github.com/esp8266/Arduino'>IDE</a>") );
-    sz += wprint  ( F(" | <a href='https://github.com/wa0uwh/ERB-EspWebServer'>GitHub</a>") );
+    sz += wprint  ( F(" | <a href='http://espressif.com/ target='MFR''>MFR</a>") );
+    sz += wprint  ( F(" | <a href='http://www.esp8266.com/' target='Forum'>Forum</a>") );
+    sz += wprint  ( F(" | <a href='http://bbs.espressif.com/' target='BBS'>BBS</a>") );
+    sz += wprint  ( F(" | <a href='http://neilkolban.com/tech/esp8266/' target='TheBOOK'>TheBOOK</a>") );
+    sz += wprint  ( F(" | <a href='https://github.com/esp8266/Arduino' target='IDE'>IDE</a>") );
+    sz += wprint  ( F(" | <a href='https://github.com/wa0uwh/ERB-EspWebServer' target='GitHub'>GitHub</a>") );
     sz += wprintln( F(" |") );
     
     sz += wprintln( F(" </td></tr>") );

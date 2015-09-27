@@ -25,7 +25,7 @@ void
 ICACHE_FLASH_ATTR
 handleNotFound()
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
     gSentSize = 0;
     
     DEBUG_MONITOR_REPORT_START();

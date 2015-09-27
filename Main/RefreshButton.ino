@@ -22,7 +22,7 @@ long
 ICACHE_FLASH_ATTR
 reFreshButton(String link)
 {
-    long sz = 0;
+    long sz = 0; // Sent Size
 
     sz += wprintln( sF(" <form method='GET' action='") + String(link) + F("'>") );
     sz += wprintln( F("  <input type='submit' name='' value='Refresh'/>") );
