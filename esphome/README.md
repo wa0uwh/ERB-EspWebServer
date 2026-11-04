@@ -1,4 +1,4 @@
-<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104c -->
+<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104d -->
 # ERB_EspWebServer (ESPHome, standalone)
 
 Standalone ESPHome rework of WA0UWH's early ERB-EspWebServer (Arduino IDE, 2015). No Home Assistant: no `api:` block; the device serves its own page (`web_server` v3) at `http://erb-espwebserver.local/`.
@@ -20,7 +20,7 @@ Board (Esp8266): `nodemcuv2` (original drives LEDs on GPIO0/2/4, i.e. ESP-12 cla
 | Reboot | `restart` and `safe_mode` buttons | none |
 | Home/Help/Info/Admin pages, Navigator | erb_ui.js tabs + Navigator + "All" entity tab; live via /events | Visitor Map, Farm image, demo graphics, sliders (not needed) |
 
-Web login: **guest / grest** (example project). Custom UI: `www/erb_ui.js` is compiled into flash (`js_include`, `js_url: ""`), so the page needs no internet. Test without hardware: `node mock/Mock_Server.js` then open http://127.0.0.1:8099/.
+Web login: none for now (auth block commented in common/, can be re-enabled). Custom UI: `www/erb_ui.js` is compiled into flash (`js_include`, `js_url: ""`), so the page needs no internet. Test without hardware: `node mock/Mock_Server.js` then open http://127.0.0.1:8099/.
 
 ## Build / flash
 1. `cp secrets.yaml.example secrets.yaml` and fill in.

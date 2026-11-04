@@ -1,5 +1,5 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104c
+# Rev: 20261104d
 # ERB_EspWebServer for ESP32-S3 Super Mini (HW-747 V0.0.2). Shared UI + entities in common/.
 # Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
 # Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
@@ -20,10 +20,10 @@ packages:
 esphome:
   project:
     name: wa0uwh.erb_espwebserver
-    version: "20261104c"
+    version: "20261104d"
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
-# Protected by the web_server basic auth (guest:grest) in common/.
+# No web login right now, so anyone on the LAN could upload firmware (see auth note in common/).
 ota:
   - platform: web_server
 

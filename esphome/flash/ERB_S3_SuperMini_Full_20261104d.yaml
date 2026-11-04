@@ -1,14 +1,14 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104c
+# Rev: 20261104d
 # ERB_S3_SuperMini_Full - REVIEW COPY ONLY (not built). Concatenation of the shared
 # package and the S3 Super Mini board file. Build from the real files, not this one.
-# Secrets shown as !secret (wifi, AP, OTA); web auth guest:grest shown as-is (example project).
+# Secrets shown as !secret (wifi, AP, OTA). Web login is off (auth block commented).
 
 # =====================================================================
 # SECTION 1: common/ERB_Common.yaml  (shared by all boards)
 # =====================================================================
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104c
+# Rev: 20261104d
 # ERB_Common - shared, board-independent part of the standalone ESPHome port of
 # github.com/wa0uwh/ERB-EspWebServer. No Home Assistant (no api: block).
 # Board files supply: Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
@@ -19,7 +19,7 @@ esphome:
   friendly_name: ${Friendly_Name}
   project:
     name: wa0uwh.erb_espwebserver
-    version: "20261104c"
+    version: "20261104d"
 
 logger:
   level: INFO
@@ -46,11 +46,11 @@ web_server:
   version: 3
   js_url: ""
   js_include: "www/erb_ui.js"   # relative to the board file
-  # Basic auth (example project): user guest, password grest (secrets.yaml web_password).
-  # Covers the page, /events, REST POSTs and the S3 /update upload.
-  auth:
-    username: guest
-    password: "grest"   # example project
+  # Web login is OFF for now (Eldon, 20261104d). To re-enable later, uncomment and set
+  # web_password in secrets.yaml; it then covers the page, /events, REST POSTs and /update.
+  # auth:
+  #   username: guest
+  #   password: !secret web_password
 
 debug:
   update_interval: 10s
@@ -183,7 +183,7 @@ button:
 # SECTION 2: ERB_EspWebServer_Esp32S3_SuperMini.yaml  (board file)
 # =====================================================================
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104c
+# Rev: 20261104d
 # ERB_EspWebServer for ESP32-S3 Super Mini (HW-747 V0.0.2). Shared UI + entities in common/.
 # Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
 # Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
@@ -203,10 +203,10 @@ substitutions:
 esphome:
   project:
     name: wa0uwh.erb_espwebserver
-    version: "20261104c"
+    version: "20261104d"
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
-# Protected by the web_server basic auth (guest:grest) in common/.
+# No web login right now, so anyone on the LAN could upload firmware (see auth note in common/).
 ota:
   - platform: web_server
 

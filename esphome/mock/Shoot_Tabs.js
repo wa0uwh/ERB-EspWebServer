@@ -1,12 +1,12 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104c
+// Rev: 20261104d
 // Shoot_Tabs - headless screenshots of each ERB UI tab against Mock_Server.js.
 const puppeteer = require('/workspace/repos/grok-voice-reader-extension/chrome-extension/node_modules/puppeteer-core');
 const Out = require('path').join(__dirname, '..', 'screens');
 (async () => {
   const b = await puppeteer.launch({ executablePath: '/opt/google/chrome/chrome', headless: 'new', args: ['--no-sandbox'] });
   const p = await b.newPage(); await p.setViewport({ width: 1000, height: 820 });
-  await p.authenticate({ username: 'guest', password: 'grest' });
+  if (process.env.MOCK_AUTH) await p.authenticate({ username: 'guest', password: 'grest' });
   const Errs = []; p.on('pageerror', e => Errs.push(e.message)); p.on('dialog', d => d.accept());
   await p.goto('http://127.0.0.1:8099/'); await new Promise(r => setTimeout(r, 6000));
   await p.evaluate(() => { document.getElementById('hMin').value = '5'; document.getElementById('hMin').dispatchEvent(new Event('change', { bubbles: true })); });

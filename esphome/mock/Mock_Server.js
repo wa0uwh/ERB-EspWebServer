@@ -1,7 +1,7 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104c
+// Rev: 20261104d
 // Mock_Server - fakes the ESPHome v3 web_server (index, /0.js, /events SSE, POST actions)
-// so www/erb_ui.js can be tested in a browser. Usage: node Mock_Server.js [port]
+// (basic auth guest:grest only when MOCK_AUTH=1) so www/erb_ui.js can be tested in a browser. Usage: node Mock_Server.js [port]
 const http = require('http'), fs = require('fs'), path = require('path');
 const Port = +process.argv[2] || 8099;
 const JS = path.join(__dirname, '..', 'www', 'erb_ui.js');
@@ -31,7 +31,7 @@ setInterval(() => {
 http.createServer((q, r) => {
   const u = decodeURIComponent(q.url.split('?')[0]);
   if (u === '/posts') { r.writeHead(200); return r.end(JSON.stringify({ Posts, Denied })); }
-  if ( q.headers.authorization !== Auth) {
+  if (process.env.MOCK_AUTH && q.headers.authorization !== Auth) {
     Denied++; r.writeHead(401, { 'WWW-Authenticate': 'Basic realm="Login Required"' }); return r.end('401');
   }
   if (u === '/update' && q.method === 'POST') {

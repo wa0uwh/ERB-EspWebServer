@@ -1,6 +1,18 @@
 <!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104 -->
 # ERB_EspWebServer ESPHome - notes (newest first)
 
+## 2026-11-04 03:25 PM PST - Rev 20261104d (web login removed)
+- Eldon tried guest/guest (we had guest/grest) and asked to remove the login for now. The web_server auth block is commented out in common/ with a re-enable note. The docs no longer mention a login. secrets.yaml.example web_password is now a placeholder.
+- Mock: auth only when MOCK_AUTH=1. Re-test without auth: LED, Heartbeat, Reboot, upload and /events all OK, no JS errors.
+- Compile: S3 RAM 107,427 B (31.4%), Flash 866,331 B (47.2%). Esp8266 RAM 34,272 B (41.8%), Flash 410,881 B (39.3%).
+- flash/: 20261104d factory + ota bins, Rev_20261104d.txt, ERB_S3_SuperMini_Full_20261104d.yaml.
+- Note: with no login, anyone on the LAN can reboot or upload firmware to the S3.
+
+## 2026-11-04 03:15 PM PST - Pushed to GitHub (Eldon OK)
+- New branch ESPHome_Standalone from origin/master, commit c6c03f0, pushed (no force, no PR). The work went in through a git worktree at /workspace/repos/ERB-EspWebServer_ESPHome, so the parked branches and the main checkout (Fix_Build_Modern_Core) were not touched.
+- Excluded via esphome/.gitignore: secrets.yaml, .esphome/, *.bin.
+- Heartbeat changed to Eldon's pattern: no WiFi = 1 s on / 1 s off; WiFi = 80/80/80 ms in a 2 s cycle.
+
 ## 2026-11-04 03:10 PM PST - Rev 20261104c
 - Web auth is back on, user guest / password grest (Eldon: example project, OK in secrets.yaml.example + docs). It covers the page, /events, REST POSTs and /update.
 - Mock: Mock_Server.js now enforces basic auth (401 without it). Shoot_Tabs.js logs in, and these all passed through auth: LED toggle, Heartbeat toggle, Reboot POST, the OTA upload (multipart /update) and the SSE stream. No-auth /events -> 401.
