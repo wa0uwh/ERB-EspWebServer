@@ -1,0 +1,255 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104c
+# ERB_S3_SuperMini_Full - REVIEW COPY ONLY (not built). Concatenation of the shared
+# package and the S3 Super Mini board file. Build from the real files, not this one.
+# Secrets shown as !secret (wifi, AP, OTA); web auth guest:grest shown as-is (example project).
+
+# =====================================================================
+# SECTION 1: common/ERB_Common.yaml  (shared by all boards)
+# =====================================================================
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104c
+# ERB_Common - shared, board-independent part of the standalone ESPHome port of
+# github.com/wa0uwh/ERB-EspWebServer. No Home Assistant (no api: block).
+# Board files supply: Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
+# plus their own esp8266:/esp32: block and board-only sensors (Vdd or Chip Temp/PSRAM).
+
+esphome:
+  name: ${Device_Name}
+  friendly_name: ${Friendly_Name}
+  project:
+    name: wa0uwh.erb_espwebserver
+    version: "20261104c"
+
+logger:
+  level: INFO
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "ERB-EspWebServer-Setup"
+    password: !secret fallback_ap_password
+
+captive_portal:
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+mdns:
+
+# Custom ERB UI, served from flash. js_url "" stops the stock page loading
+# its app from oi.esphome.io, so the device needs no internet at all.
+web_server:
+  port: 80
+  version: 3
+  js_url: ""
+  js_include: "www/erb_ui.js"   # relative to the board file
+  # Basic auth (example project): user guest, password grest (secrets.yaml web_password).
+  # Covers the page, /events, REST POSTs and the S3 /update upload.
+  auth:
+    username: guest
+    password: "grest"   # example project
+
+debug:
+  update_interval: 10s
+
+time:
+  - platform: sntp
+    id: Sntp_Time
+    timezone: "PST8PDT,M3.2.0,M11.1.0"   # America/Los_Angeles (POSIX)
+
+sensor:
+  - platform: wifi_signal
+    id: Wifi_Rssi
+    name: "WiFi Signal"
+    update_interval: 30s
+  - platform: uptime
+    id: Uptime_Sec
+    name: "Uptime"
+    update_interval: 10s
+  - platform: debug
+    free:
+      id: Free_Heap
+      name: "Free Heap"
+    block:
+      name: "Heap Max Block"
+    loop_time:
+      name: "Loop Time"
+
+text_sensor:
+  - platform: version
+    name: "ESPHome Version"
+    hide_timestamp: true
+  - platform: debug
+    device:
+      name: "Device Info"
+    reset_reason:
+      name: "Reset Reason"
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+    ssid:
+      name: "Connected SSID"
+    bssid:
+      name: "Connected BSSID"
+    mac_address:
+      name: "MAC Address"
+    scan_results:
+      name: "WiFi Scan"
+  - platform: template
+    id: Clock_Text
+    name: "Clock"
+    icon: mdi:clock-outline
+    update_interval: 1s
+    lambda: |-
+      auto t = id(Sntp_Time).now();
+      if (!t.is_valid()) return {"--:--:--"};
+      return t.strftime("%Y-%m-%d %H:%M:%S %Z");
+
+# LEDs are active-low (original: ON = 0, LED wired to 3.3V)
+switch:
+  - platform: gpio
+    id: Red_LED
+    name: "Red LED"
+    pin: { number: "${Red_Pin}", inverted: true }
+    restore_mode: RESTORE_DEFAULT_OFF
+  - platform: gpio
+    id: Grn_LED
+    name: "Green LED"
+    pin: { number: "${Grn_Pin}", inverted: true }
+  - platform: gpio
+    id: Blu_LED
+    name: "Blue LED"
+    pin: { number: "${Blu_Pin}", inverted: true }
+
+  # Heartbeat: while ON, the interval below drives the Blue LED with a
+  # double-blink. Turning it OFF leaves the Blue LED off and back under manual control.
+  - platform: template
+    id: Heartbeat
+    name: "Heartbeat"
+    icon: mdi:heart-pulse
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    on_turn_off:
+      - switch.turn_off: Blu_LED
+
+# Heartbeat on the Blue LED (Eldon's pattern), one 2 s cycle per interval tick:
+#   WiFi NOT connected: slow blink, 1 s on / 1 s off
+#   WiFi connected:     80 ms on, 80 ms off, 80 ms on, then off for the rest of the 2 s
+# wifi.connected is checked every cycle, so the pattern follows WiFi drops and reconnects.
+interval:
+  - interval: 2000ms
+    then:
+      - if:
+          condition:
+            switch.is_on: Heartbeat
+          then:
+            - if:
+                condition:
+                  wifi.connected:
+                then:
+                  - switch.turn_on: Blu_LED
+                  - delay: 80ms
+                  - switch.turn_off: Blu_LED
+                  - delay: 80ms
+                  - switch.turn_on: Blu_LED
+                  - delay: 80ms
+                  - switch.turn_off: Blu_LED
+                else:
+                  - switch.turn_on: Blu_LED
+                  - delay: 1000ms
+                  - switch.turn_off: Blu_LED
+
+binary_sensor:
+  - platform: status
+    name: "Status"
+  - platform: gpio
+    id: Input_1
+    name: "Input 1"
+    pin: { number: "${In_Pin}", mode: INPUT_PULLUP, inverted: true }
+
+button:
+  - platform: restart
+    name: "Restart"
+  - platform: safe_mode
+    name: "Restart (Safe Mode)"
+
+# End of SECTION 1
+
+
+# =====================================================================
+# SECTION 2: ERB_EspWebServer_Esp32S3_SuperMini.yaml  (board file)
+# =====================================================================
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104c
+# ERB_EspWebServer for ESP32-S3 Super Mini (HW-747 V0.0.2). Shared UI + entities in common/.
+# Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
+# Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
+# Pins used are all on the side headers: IO4/IO5/IO6 LEDs, IO7 input (no strap/USB/flash pins).
+# GPIO48 = onboard WS2812 (shared with a red LED on some boards) - left for the optional light below.
+
+substitutions:
+  Device_Name: erb-espwebserver-s3
+  Friendly_Name: ERB EspWebServer S3
+  Red_Pin: GPIO4
+  Grn_Pin: GPIO5
+  Blu_Pin: GPIO6
+  In_Pin: GPIO7
+
+# packages: common -> see SECTION 1 above
+
+esphome:
+  project:
+    name: wa0uwh.erb_espwebserver
+    version: "20261104c"
+
+# Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
+# Protected by the web_server basic auth (guest:grest) in common/.
+ota:
+  - platform: web_server
+
+esp32:
+  variant: esp32s3
+  board: esp32-s3-devkitc-1
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+# Logs over the native USB-C port (S3 built-in USB Serial/JTAG CDC, no UART chip on this board)
+logger:
+  level: INFO
+  hardware_uart: USB_SERIAL_JTAG
+
+# Lets web.esphome.io send WiFi credentials over USB right after flashing
+# (so secrets.yaml WiFi values can stay dummy). Uses the logger's USB_SERIAL_JTAG port.
+improv_serial:
+
+# PSRAM: confirmed by boot log 20261104 (QFN56 rev v0.2, 4MB XMC flash, 2MB quad PSRAM AP_3v3).
+# QUAD mode only - octal will fail to boot on R2 parts.
+psram:
+  mode: quad
+  speed: 80MHz
+
+# No ADC VCC on ESP32: chip temperature instead of Vdd
+sensor:
+  - platform: internal_temperature
+    name: "Chip Temp"
+    update_interval: 30s
+  - platform: debug
+    psram:
+      name: "PSRAM Free"
+
+# Optional onboard WS2812 RGB LED on GPIO48:
+# light:
+#   - platform: esp32_rmt_led_strip
+#     rgb_order: GRB
+#     pin: GPIO48
+#     num_leds: 1
+#     chipset: ws2812
+#     name: "Onboard RGB"
+
+# End of SECTION 2
+
+# End

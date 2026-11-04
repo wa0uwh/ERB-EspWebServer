@@ -1,0 +1,31 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104c
+# ERB_EspWebServer for ESP8266 (NodeMCU v2 / ESP-12). Shared UI + entities in common/.
+# ESP-01 alternative: board: esp01_1m, only GPIO0/2 exist - drop Blue LED and the input.
+
+substitutions:
+  Device_Name: erb-espwebserver
+  Friendly_Name: ERB EspWebServer
+  Red_Pin: GPIO2   # D4, onboard blue LED on NodeMCU
+  Grn_Pin: GPIO0   # D3, boot-strap pin - keep LED to 3.3V
+  Blu_Pin: GPIO4   # D2
+  In_Pin: GPIO5    # D1
+
+packages:
+  common: !include common/ERB_Common.yaml
+
+esp8266:
+  board: nodemcuv2
+
+# Original measured Vdd with ADC_MODE(ADC_VCC)
+sensor:
+  - platform: adc
+    pin: VCC
+    id: Vdd_Volts
+    name: "Vdd"
+    update_interval: 10s
+  - platform: debug
+    fragmentation:
+      name: "Heap Fragmentation"
+
+# End

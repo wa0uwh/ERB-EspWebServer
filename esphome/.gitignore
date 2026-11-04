@@ -1,0 +1,6 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104c
+secrets.yaml
+.esphome/
+*.bin
+# End
