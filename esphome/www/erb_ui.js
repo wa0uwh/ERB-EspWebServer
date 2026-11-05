@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104i
+// Rev: 20261104j
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
   var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104i';
+  var Rev = '20261104j';
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
     '.Nav{width:100%;border-collapse:collapse}.Nav td{padding:2px}.Nav a{color:#00e;cursor:pointer;text-decoration:underline}' +
@@ -87,7 +87,7 @@
         '<br>Input 1 is <b id="v_binary_sensor_Input_1">' + Esc(V('binary_sensor/Input 1')) + '</b></div>';
     },
     info: function () {
-      return '<pre>' + Row('Build Name', 'text_sensor/Build Name') + Row('Build Time', 'text_sensor/Build Time') + Row('ESPHome', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
+      return '<pre>' + Row('Build Name', 'text_sensor/Build Name') + '<b>Upload File</b>: <span id="infoFile">--</span>\n' + Row('Build Time', 'text_sensor/Build Time') + Row('ESPHome', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
         Row('Reset Reason', 'text_sensor/Reset Reason') + Row('Device', 'text_sensor/Device Info') +
         Row('IP Address', 'text_sensor/IP Address') + Row('SSID', 'text_sensor/Connected SSID') + Row('BSSID', 'text_sensor/Connected BSSID') +
         Row('RSSI', 'sensor/WiFi Signal') + Row('MAC', 'text_sensor/MAC Address') + Row('Free Heap', 'sensor/Free Heap') +
@@ -132,6 +132,9 @@
   function Refresh() {
     var fh = N('sensor/Free Heap') / 1000;
     $('navStat').textContent = (isNaN(fh) ? '--' : fh.toFixed(3)) + ' - ' + Hits + ' - ' + Rev;
+    var bn = V('text_sensor/Build Name'); bn = (bn && bn != '--') ? bn : '';
+    if ($('ftBuild')) $('ftBuild').textContent = bn || '--';
+    if ($('infoFile')) $('infoFile').textContent = bn ? bn + '.ota.bin' : '--';
     SetInst('gHeap', fh, isNaN(fh) ? '--' : fh.toFixed(1));
     var t = IsS3() ? 'sensor/Chip Temp' : 'sensor/Vdd'; SetInst('gVdd', N(t), V(t));
     Object.keys(S).forEach(function (k) {
@@ -205,7 +208,7 @@
   }
   function Start() {
     document.body.innerHTML = '<h1 id="erbTitle">ERB EspWebServer<small>ERB\'s Esp Experimental Web Server (ESPHome) - <span id="Conn">connecting</span></small></h1>' +
-      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:12px">WA0UWH - ERB-EspWebServer - Rev ' + Rev + '</div>';
+      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:12px">WA0UWH - ERB-EspWebServer - Rev ' + Rev + ' - <span id="ftBuild">--</span></div>';
     S['x/rev'] = { state: Rev };
     Show('home'); Connect(); setInterval(Tick, 1000); setInterval(DrawLine, 10000);
   }

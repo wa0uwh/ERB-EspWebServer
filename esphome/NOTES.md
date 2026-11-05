@@ -95,3 +95,10 @@
 - Cause: the WiFi credentials were entered with improv and saved under App.get_config_version_hash() (esphome wifi_component.cpp:693-695). Any config change (rev, Build_Name, variant) changes the hash, so the new firmware forgets them. secrets.yaml WiFi values are dummy, so there is nothing to fall back on.
 - Fallback AP "ERB-EspWebServer-Setup" comes up, but its password is the dummy, which Eldon does not know.
 - Fix now: USB to web.esphome.io > Connect > Configure WiFi (improv); no reflash needed. Permanent fix: real WiFi in secrets.yaml and/or a known AP password.
+
+## 2026-11-04 6:37 PM PST - Rev 20261104j: footer shows full Build Name / upload file name
+- Rev f claimed the footer showed Build Name; it never did (only "Rev " + Rev). Fixed: footer "WA0UWH - ERB-EspWebServer - Rev 20261104j - <Build Name>" (span ftBuild, filled in Refresh(), '--' if empty).
+- Info tab: kept Build Name row, added "Upload File: <Build Name>.ota.bin" (id infoFile).
+- Mock checked (no JS errors), screens/PlainLed48/ refreshed.
+- flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104j.ota.bin (867024 B), .factory.bin (932560 B), Rev_20261104j.txt. Credentials baked in from secrets.yaml. NodeMCU + Ws2812 compile OK (no bins).
+- Note: PlainLed48 and Ws2812 share build dir erb-espwebserver-s3; compile PlainLed48 LAST before copying bins.
