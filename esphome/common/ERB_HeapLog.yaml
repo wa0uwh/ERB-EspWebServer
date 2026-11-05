@@ -1,0 +1,18 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104l
+# On-device heap history (ESP32 esp-idf only): NVS ring, GET /heap_history.csv, Admin "Clear Heap History" button.
+
+external_components:
+  - source: { type: local, path: components }
+    components: [erb_heap_log]
+
+erb_heap_log:
+  id: Heap_Log
+
+button:
+  - platform: template
+    name: "Clear Heap History"
+    on_press:
+      - lambda: id(Heap_Log).clear();
+
+# End

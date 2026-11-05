@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104k
+// Rev: 20261104l
 // Mock_Server - fakes the ESPHome v3 web_server (index, /0.js, /events SSE, POST actions)
 // (basic auth guest:grest only when MOCK_AUTH=1) so www/erb_ui.js can be tested in a browser. Usage: node Mock_Server.js [port]
 const http = require('http'), fs = require('fs'), path = require('path');
@@ -8,13 +8,13 @@ const JS = path.join(__dirname, '..', 'www', 'erb_ui.js');
 const S = {
   'sensor/Free Heap': [23456, '23456 B'], 'sensor/Vdd': [3.29, '3.29 V'], 'sensor/WiFi Signal': [-61, '-61 dBm'],
   'sensor/Uptime': [3725, '3725 s'], 'sensor/Heap Max Block': [18000, '18000 B'], 'sensor/Loop Time': [16, '16 ms'],
-  'text_sensor/ESPHome Version': [null, '2026.10.2'], 'text_sensor/Build Name': [null, process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104k' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104k'], 'text_sensor/Build Time': [null, '2026-11-04 17:55:00 -0800'], 'text_sensor/Reset Reason': [null, 'Power On'],
+  'text_sensor/ESPHome Version': [null, '2026.10.2'], 'text_sensor/Build Name': [null, process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104l' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104l'], 'text_sensor/Build Time': [null, '2026-11-04 17:55:00 -0800'], 'text_sensor/Reset Reason': [null, 'Power On'],
   'text_sensor/Device Info': [null, '2026.10.2|Flash: 4096kB Speed:40MHz Mode:DIO|Chip: 0x00E42F'],
   'text_sensor/IP Address': [null, '10.10.10.42'], 'text_sensor/Connected SSID': [null, 'MockNet'],
   'text_sensor/Connected BSSID': [null, 'AA:BB:CC:DD:EE:FF'], 'text_sensor/MAC Address': [null, '5C:CF:7F:12:34:56'],
   'text_sensor/WiFi Scan': [null, 'MockNet: -61dB\nNeighbor-5G: -78dB\nWA0UWH-Lab: -70dB'],
   'text_sensor/Clock': [null, ''], 'switch/Red LED': [true, 'ON'], 'switch/Green LED': [false, 'OFF'], 'switch/Blue LED': [false, 'OFF'], 'switch/Heartbeat': [true, 'ON'],
-  'binary_sensor/Input 1': [false, 'OFF'], 'binary_sensor/Status': [true, 'ON'], 'button/Restart': [null, ''], 'button/Restart (Safe Mode)': [null, ''],
+  'binary_sensor/Input 1': [false, 'OFF'], 'binary_sensor/Status': [true, 'ON'], 'button/Restart': [null, ''], 'button/Restart (Safe Mode)': [null, ''], 'button/Clear Heap History': [null, ''],
 };
 if (process.env.MOCK_NO_LEDS) ['switch/Red LED', 'switch/Green LED', 'switch/Blue LED'].forEach(k => delete S[k]);   // PlainLed48 entity set
 const Clients = new Set(), Posts = [];
@@ -39,6 +39,11 @@ http.createServer((q, r) => {
     let n = 0; q.on('data', c => n += c.length); q.on('end', () => { Posts.push('/update ' + n + 'B'); r.writeHead(200); r.end('Update Successful!'); }); return;
   }
   if (u === '/') { r.writeHead(200, { 'Content-Type': 'text/html' }); return r.end('<!DOCTYPE html><html><head><meta charset=UTF-8><link rel=icon href=data:></head><body><script type=module src=/0.js></script><esp-app></esp-app></body></html>'); }
+  if (u === '/heap_history.csv') {   // fake on-device history: 600 min, 2 boots, slow leak
+    let t = 'stamp,free,minfree,boot\n', e = Math.floor(Date.now() / 1000) - 600 * 60;
+    for (let i = 0; i < 600; i++) { const b = i < 380 ? 7 : 8, k = b == 7 ? i : i - 380; t += `${e + i * 60},${Math.round(24000 - k * 8 + 600 * Math.sin(i / 9))},${Math.round(15000 - k * 4)},${b}\n`; }
+    r.writeHead(200, { 'Content-Type': 'text/csv' }); return r.end(t);
+  }
   if (u === '/0.js') { r.writeHead(200, { 'Content-Type': 'text/javascript' }); return r.end(fs.readFileSync(JS)); }
   
   if (u === '/events') {

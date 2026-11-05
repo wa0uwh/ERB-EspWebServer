@@ -109,3 +109,12 @@
 - Above footer: 300x40 SVG heap sparkline (Spark[], last 300 Free Heap samples ~10 min, browser memory only), min/max/now text, blue min marker, uptime text beside it. Home history graph unchanged.
 - Mock checked (no JS errors), screens/PlainLed48/ refreshed. Full compile log flash/Build_20261104k.log (no warnings, no secrets).
 - flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104k.factory.bin (933232 B), .ota.bin (867696 B), Rev_20261104k.txt. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.
+
+## 2026-11-04 7:43 PM PST - Rev 20261104l: on-device heap history (flash ring, served locally)
+- components/erb_heap_log (external_components, local) + common/ERB_HeapLog.yaml (PlainLed48 only; esp-idf). Every 60 s (set_interval, main loop) stores 8 B {epoch s if SNTP valid else uptime s, free/16, boot&0xF<<12 | minfree/256} in a 2560-record ring (~42.7 h) = 40 NVS blobs x 64 records, namespace "erbheap", header {magic, head, count, boot}.
+- Storage: existing NVS partition (0x70000 = 448 KB). Partition table UNCHANGED (first 64 KB of factory.bin identical to k) - OTA from k is fine.
+- Wear: ~1 x 512 B blob + 12 B header per minute ~ 0.9 MB/day written into NVS, which rotates over ~110 4 KB pages -> ~2 erases/page/day -> 100k-cycle flash ~ 100+ years.
+- Safe: any NVS open/write failure -> ESP_LOGW and disable/pause; never blocks boot. LATE setup priority.
+- GET http://erb-espwebserver-s3.local/heap_history.csv -> "stamp,free,minfree,boot" oldest first, chunked (no big RAM buffer).
+- UI: second 300x40 sparkline "device" long trend (blue, green dashed = reboot, low-water text), fetched on load + every 5 min; Admin "Clear heap history" (confirm) -> button/Clear Heap History/press.
+- Mock serves fake 600-min, 2-boot history. Log flash/Build_20261104l.log: 0 warnings. Bins: _20261104l.factory.bin 935792 B, .ota.bin 870256 B.
