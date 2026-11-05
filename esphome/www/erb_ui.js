@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104h
+// Rev: 20261104i
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
   var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104h';
+  var Rev = '20261104i';
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
     '.Nav{width:100%;border-collapse:collapse}.Nav td{padding:2px}.Nav a{color:#00e;cursor:pointer;text-decoration:underline}' +
@@ -82,7 +82,7 @@
         '</div><div class="Box">' + LineSvg() + '</div><div class="Ctr">History: <select id="hMin">' +
         [5, 15, 30, 60].map(function (m) { return '<option' + (m == Hist_Min ? ' selected' : '') + '>' + m + '</option>'; }).join('') + '</select> min</div>' +
         '<div class="Ctr" style="margin-top:10px"><b>LED Control</b><br>' +
-        ['Red', 'Green', 'Blue'].map(function (c) { return '<button class="Led" data-led="' + c + ' LED">' + c + ' LED is <span>' + Esc(V('switch/' + c + ' LED')) + '</span></button>'; }).join('') +
+        ['Red', 'Green', 'Blue'].filter(function (c) { return S['switch/' + c + ' LED']; }).map(function (c) { return '<button class="Led" data-led="' + c + ' LED">' + c + ' LED is <span>' + Esc(V('switch/' + c + ' LED')) + '</span></button>'; }).join('') +
         '<button class="Led" data-led="Heartbeat">Heartbeat is <span>' + Esc(V('switch/Heartbeat')) + '</span></button>' +
         '<br>Input 1 is <b id="v_binary_sensor_Input_1">' + Esc(V('binary_sensor/Input 1')) + '</b></div>';
     },
@@ -191,7 +191,7 @@
       Hist.push([Date.now(), d.value]);
       while (Hist.length && Hist[0][0] < Date.now() - 60 * 60000) Hist.shift();
     }
-    if (isNew && (Page == 'all' || Page == 'info' || (Page == 'home' && k == 'sensor/Chip Temp'))) Show(Page); else Refresh();
+    if (isNew && (Page == 'all' || Page == 'info' || (Page == 'home' && (k == 'sensor/Chip Temp' || k.indexOf('switch/') == 0)))) Show(Page); else Refresh();
   }
   function Connect() {
     var es = new EventSource('/events');

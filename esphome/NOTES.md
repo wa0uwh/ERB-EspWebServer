@@ -1,6 +1,14 @@
 <!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104 -->
 # ERB_EspWebServer ESPHome - notes (newest first)
 
+## 2026-11-04 06:40 PM PST - Rev 20261104i (S3 PlainLed48; LEDs split per variant)
+- Eldon: removed the three unwired Red/Green/Blue LED switches from PlainLed48. The Blue one looked out of sync with the heartbeat.
+- Split out of common/: common/ERB_Leds_Rgb.yaml (Red/Green/Blue switches; included by NodeMcu + Ws2812) and common/ERB_Heartbeat.yaml (Heartbeat toggle + 2 s WiFi-aware pattern, which drives the switch named by substitution Hb_Target).
+  NodeMcu/Ws2812: Hb_Target Blu_LED (same behavior as before). PlainLed48: Hb_Target Heartbeat_LED = internal gpio switch on GPIO48, active-high, ALWAYS_OFF at boot; Heartbeat OFF turns it off.
+- erb_ui.js: the LED Control buttons show only for LED entities that exist; the Heartbeat button always shows. Mock (MOCK_NO_LEDS=1) shows only Heartbeat, no JS errors; screens/PlainLed48/*.png. The normal mock still shows all 4 buttons.
+- Compile: PlainLed48 RAM 107,435 B (31.4%), Flash 866,819 B (47.2%). Check-only (no new bins): NodeMcu 42.1% / 39.4%, Ws2812 32.5% / 49.3%.
+- Baked-in check on the i ota.bin (counts only): WiFi SSID 1, AP password 1, Build_Name 1. The bins are chmod 600 and not in git.
+
 ## 2026-11-04 06:30 PM PST - Rev 20261104h (S3 PlainLed48 only)
 - AP password now compiled in from secrets.yaml (real fallback hotspot password, chmod 600, never printed or committed).
 - Compile: RAM 107,563 B (31.5%), Flash 866,979 B (47.2%). flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104h factory + ota (chmod 600, not in git), Rev_20261104h.txt.

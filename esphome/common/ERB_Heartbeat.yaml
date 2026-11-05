@@ -1,0 +1,42 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104i
+# ERB_Heartbeat - "Heartbeat" web toggle plus the blink pattern. It drives the switch whose
+# id the board gives in substitution Hb_Target (Blu_LED, or PlainLed48's Heartbeat_LED).
+#   WiFi NOT connected: slow blink, 1 s on / 1 s off
+#   WiFi connected:     80 ms on, 80 ms off, 80 ms on, then off for the rest of the 2 s
+# wifi.connected is checked every cycle, so the pattern follows WiFi drops and reconnects.
+
+switch:
+  - platform: template
+    id: Heartbeat
+    name: "Heartbeat"
+    icon: mdi:heart-pulse
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    on_turn_off:
+      - switch.turn_off: ${Hb_Target}   # Heartbeat OFF -> LED off
+
+interval:
+  - interval: 2000ms
+    then:
+      - if:
+          condition:
+            switch.is_on: Heartbeat
+          then:
+            - if:
+                condition:
+                  wifi.connected:
+                then:
+                  - switch.turn_on: ${Hb_Target}
+                  - delay: 80ms
+                  - switch.turn_off: ${Hb_Target}
+                  - delay: 80ms
+                  - switch.turn_on: ${Hb_Target}
+                  - delay: 80ms
+                  - switch.turn_off: ${Hb_Target}
+                else:
+                  - switch.turn_on: ${Hb_Target}
+                  - delay: 1000ms
+                  - switch.turn_off: ${Hb_Target}
+
+# End

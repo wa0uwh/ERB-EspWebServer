@@ -14,10 +14,13 @@ substitutions:
   Red_Pin: GPIO4
   Grn_Pin: GPIO5
   Blu_Pin: GPIO6
+  Hb_Target: Blu_LED   # heartbeat drives the Blue LED
   In_Pin: GPIO7
 
 packages:
   common: !include common/ERB_Common.yaml
+  leds: !include common/ERB_Leds_Rgb.yaml
+  heartbeat: !include common/ERB_Heartbeat.yaml
 
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.

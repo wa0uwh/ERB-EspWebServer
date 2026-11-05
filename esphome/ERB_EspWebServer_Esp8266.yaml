@@ -11,10 +11,13 @@ substitutions:
   Red_Pin: GPIO2   # D4, onboard blue LED on NodeMCU
   Grn_Pin: GPIO0   # D3, boot-strap pin - keep LED to 3.3V
   Blu_Pin: GPIO4   # D2
+  Hb_Target: Blu_LED   # heartbeat drives the Blue LED
   In_Pin: GPIO5    # D1
 
 packages:
   common: !include common/ERB_Common.yaml
+  leds: !include common/ERB_Leds_Rgb.yaml
+  heartbeat: !include common/ERB_Heartbeat.yaml
 
 esp8266:
   board: nodemcuv2

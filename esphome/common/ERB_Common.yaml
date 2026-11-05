@@ -1,7 +1,8 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104f
+# Rev: 20261104i
 # ERB_Common - shared, board-independent part of the standalone ESPHome port of
 # github.com/wa0uwh/ERB-EspWebServer. No Home Assistant (no api: block).
+# LEDs and heartbeat live in ERB_Leds_Rgb.yaml / ERB_Heartbeat.yaml (per-board packages).
 # Board files supply: Rev, Build_Name (= the bin base name), Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
 # plus their own esp8266:/esp32: block and board-only sensors (Vdd or Chip Temp/PSRAM).
 
@@ -116,60 +117,6 @@ text_sensor:
       auto t = id(Sntp_Time).now();
       if (!t.is_valid()) return {"--:--:--"};
       return t.strftime("%Y-%m-%d %H:%M:%S %Z");
-
-# LEDs are active-low (original: ON = 0, LED wired to 3.3V)
-switch:
-  - platform: gpio
-    id: Red_LED
-    name: "Red LED"
-    pin: { number: "${Red_Pin}", inverted: true }
-    restore_mode: RESTORE_DEFAULT_OFF
-  - platform: gpio
-    id: Grn_LED
-    name: "Green LED"
-    pin: { number: "${Grn_Pin}", inverted: true }
-  - platform: gpio
-    id: Blu_LED
-    name: "Blue LED"
-    pin: { number: "${Blu_Pin}", inverted: true }
-
-  # Heartbeat: while ON, the interval below drives the Blue LED with a
-  # double-blink. Turning it OFF leaves the Blue LED off and back under manual control.
-  - platform: template
-    id: Heartbeat
-    name: "Heartbeat"
-    icon: mdi:heart-pulse
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_ON
-    on_turn_off:
-      - switch.turn_off: Blu_LED
-
-# Heartbeat on the Blue LED (Eldon's pattern), one 2 s cycle per interval tick:
-#   WiFi NOT connected: slow blink, 1 s on / 1 s off
-#   WiFi connected:     80 ms on, 80 ms off, 80 ms on, then off for the rest of the 2 s
-# wifi.connected is checked every cycle, so the pattern follows WiFi drops and reconnects.
-interval:
-  - interval: 2000ms
-    then:
-      - if:
-          condition:
-            switch.is_on: Heartbeat
-          then:
-            - if:
-                condition:
-                  wifi.connected:
-                then:
-                  - switch.turn_on: Blu_LED
-                  - delay: 80ms
-                  - switch.turn_off: Blu_LED
-                  - delay: 80ms
-                  - switch.turn_on: Blu_LED
-                  - delay: 80ms
-                  - switch.turn_off: Blu_LED
-                else:
-                  - switch.turn_on: Blu_LED
-                  - delay: 1000ms
-                  - switch.turn_off: Blu_LED
 
 binary_sensor:
   - platform: status

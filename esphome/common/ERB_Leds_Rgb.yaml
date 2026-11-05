@@ -1,0 +1,22 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104i
+# ERB_Leds_Rgb - the original Red/Green/Blue LED switches (off-board LEDs on the
+# board's Red_Pin/Grn_Pin/Blu_Pin). Included by NodeMcu and Ws2812, NOT by PlainLed48.
+
+# LEDs are active-low (original: ON = 0, LED wired to 3.3V)
+switch:
+  - platform: gpio
+    id: Red_LED
+    name: "Red LED"
+    pin: { number: "${Red_Pin}", inverted: true }
+    restore_mode: RESTORE_DEFAULT_OFF
+  - platform: gpio
+    id: Grn_LED
+    name: "Green LED"
+    pin: { number: "${Grn_Pin}", inverted: true }
+  - platform: gpio
+    id: Blu_LED
+    name: "Blue LED"
+    pin: { number: "${Blu_Pin}", inverted: true }
+
+# End

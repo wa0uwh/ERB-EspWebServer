@@ -1,9 +1,9 @@
-<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104f -->
+<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104i -->
 # ERB_EspWebServer (ESPHome, standalone)
 
 Standalone ESPHome rework of WA0UWH's early ERB-EspWebServer (Arduino IDE, 2015). No Home Assistant: no `api:` block; the device serves its own page (`web_server` v3) at `http://erb-espwebserver.local/`.
 
-Files: `common/ERB_Common.yaml` (shared), `ERB_EspWebServer_Esp8266.yaml` (nodemcuv2), `ERB_EspWebServer_Esp32S3_SuperMini.yaml` (Ws2812) / `..._PlainLed48.yaml` (HW-747 S3 Super Mini, 4 MB, LEDs IO4/5/6, input IO7, logs on USB), UI `www/erb_ui.js`.
+Files: `common/ERB_Common.yaml` (shared), `common/ERB_Leds_Rgb.yaml` (R/G/B LEDs, NodeMcu + Ws2812), `common/ERB_Heartbeat.yaml` (heartbeat, all), `ERB_EspWebServer_Esp8266.yaml` (nodemcuv2), `ERB_EspWebServer_Esp32S3_SuperMini.yaml` (Ws2812) / `..._PlainLed48.yaml` (HW-747 S3 Super Mini, 4 MB, LEDs IO4/5/6, input IO7, logs on USB), UI `www/erb_ui.js`.
 
 Board (Esp8266): `nodemcuv2` (original drives LEDs on GPIO0/2/4, i.e. ESP-12 class). Alternative: `esp01_1m` for an ESP-01 (remove Blue LED / GPIO4 and the GPIO5 input; only GPIO0/2 are broken out).
 

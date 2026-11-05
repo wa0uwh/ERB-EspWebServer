@@ -1,23 +1,22 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104h
+# Rev: 20261104i
 # ERB_EspWebServer for ESP32-S3 Super Mini, PLAIN LED on GPIO48 variant (try if the WS2812 build stays dark). Shared UI + entities in common/.
 # Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
 # Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
-# Pins used are all on the side headers: IO4/IO5/IO6 LEDs, IO7 input (no strap/USB/flash pins).
+# No Red/Green/Blue LEDs here (none wired). Heartbeat drives the onboard plain LED on GPIO48. IO7 = input.
 # GPIO48 = onboard WS2812 (shared with a red LED on some boards) - left for the optional light below.
 
 substitutions:
-  Rev: "20261104h"
-  Build_Name: ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104h   # must equal the bin base name
+  Rev: "20261104i"
+  Build_Name: ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104i   # must equal the bin base name
   Device_Name: erb-espwebserver-s3
   Friendly_Name: ERB EspWebServer S3
-  Red_Pin: GPIO4
-  Grn_Pin: GPIO5
-  Blu_Pin: GPIO48   # onboard plain LED; heartbeat drives it directly
+  Hb_Target: Heartbeat_LED   # heartbeat drives the onboard GPIO48 LED
   In_Pin: GPIO7
 
 packages:
   common: !include common/ERB_Common.yaml
+  heartbeat: !include common/ERB_Heartbeat.yaml   # no ERB_Leds_Rgb here
 
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
@@ -56,13 +55,13 @@ sensor:
     psram:
       name: "PSRAM Free"
 
-# GPIO48 plain LED polarity: assumed active-HIGH (LED to GND, ON = 1); common/ has
-# inverted: true for the off-board LEDs, so it is overridden here. If ON/OFF look swapped,
-# set inverted: true.
+# Onboard plain LED on GPIO48, used only by the heartbeat (internal: not on the web page).
+# Active-HIGH, confirmed on Eldon's HW-747 V0.0.2 (red LED blinks with the heartbeat).
 switch:
-  - id: !extend Blu_LED
-    pin:
-      number: GPIO48
-      inverted: false
+  - platform: gpio
+    id: Heartbeat_LED
+    internal: true
+    pin: { number: GPIO48, inverted: false }
+    restore_mode: ALWAYS_OFF
 
 # End
