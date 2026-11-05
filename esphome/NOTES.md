@@ -1,6 +1,10 @@
 <!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104 -->
 # ERB_EspWebServer ESPHome - notes (newest first)
 
+## 2026-11-04 06:30 PM PST - Rev 20261104h (S3 PlainLed48 only)
+- AP password now compiled in from secrets.yaml (real fallback hotspot password, chmod 600, never printed or committed).
+- Compile: RAM 107,563 B (31.5%), Flash 866,979 B (47.2%). flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104h factory + ota (chmod 600, not in git), Rev_20261104h.txt.
+
 ## 2026-11-04 06:25 PM PST - Rev 20261104g (S3 PlainLed48 only)
 - PlainLed48 f works on Eldon's HW-747; the red GPIO48 heartbeat is OK.
 - WiFi now compiled in from secrets.yaml (real values, chmod 600, never printed or committed). Reason: WiFi saved by improv was lost after each new config, because the config_version_hash changed.
