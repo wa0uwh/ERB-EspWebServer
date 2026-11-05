@@ -129,3 +129,14 @@
 ## 2026-11-04 8:40 PM PST - Rev 20261104n: footer drops repeated firmware name
 - Eldon confirmed rev m on hardware (Home firmware line + footer show real values). Per his marked screenshot: footer second line now "Rev <Rev> | Built <Build Time> | Up d hh:mm:ss" (removed "Firmware <Build Name> |"); "WA0UWH - ERB-EspWebServer" kept. Home "Firmware: <name>.factory.bin / .ota.bin" line unchanged. Nothing else changed.
 - Mock checked (no JS errors), screens/PlainLed48/ refreshed. Log flash/Build_20261104n.log: 0 warnings. Bins (600): _20261104n.factory.bin 935296 B, .ota.bin 869760 B. First 64 KB == m. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.
+
+## 2026-11-04 8:59 PM PST - Rev 20261104n confirmed on the board
+- Eldon: rev n is working as expected on the HW-747 (PlainLed48). This is the current known-good rev.
+
+## 2026-11-04 9:12 PM PST - Rev 20261104o: Boot Slot readout (USB/factory vs OTA)
+- Eldon confirmed rev n works (factory flash and OTA). New common/ERB_BootSlot.yaml + common/erb_boot_slot.h (S3 files only; NodeMCU untouched, still compiles). Template text_sensor "Boot Slot", published in on_boot (priority -100) and every 60 s.
+- Value: esp_ota_get_running_partition()->label + " (OTA)" if esp_ota_get_state_partition(running) == ESP_OK, else " (USB/factory)".
+- Why it is reliable (IDF 5.5.6 esp_ota_ops.c:1025): get_state_partition returns ESP_OK only if a CRC-valid otadata entry selects that slot. The factory.bin written at 0x0 covers otadata 0x9000-0xAFFF with 0xFF (checked in the bin) -> no valid entry -> USB/factory. Every OTA (esp_ota_set_boot_partition) writes a valid entry -> OTA, including the 2nd OTA landing back in app0 ("app0 (OTA)"). No NVS flag needed, so a USB re-flash of the SAME build is reported correctly (USB/factory).
+- Limits: writing only the .ota.bin over USB at 0x10000 (no otadata rewrite) after an earlier OTA is reported as OTA (and the bootloader may still boot the other slot). erase_flash, then factory = USB/factory. Help tab explains app0/app1.
+- UI: footer "Rev | Built | Slot <value> | Up"; Info row "Boot Slot" (shown when the device sends it). Mock: MOCK_SLOT (default "app0 (USB/factory)"), checked "app1 (OTA)" and "app0 (USB/factory)", no JS errors; screens/PlainLed48/ refreshed (USB/factory).
+- Log flash/Build_20261104o.log: 0 warnings. Bins (600): _20261104o.factory.bin 935936 B, .ota.bin 870400 B. First 64 KB == n. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.

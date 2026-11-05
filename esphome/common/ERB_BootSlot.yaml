@@ -1,0 +1,19 @@
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104o
+# Boot Slot readout (ESP32 only, not NodeMCU): running app partition + how it got there (otadata), see erb_boot_slot.h.
+esphome:
+  includes:
+    - common/erb_boot_slot.h
+  on_boot:
+    priority: -100
+    then:
+      - lambda: id(Boot_Slot_Text).publish_state(erb_boot_slot());
+
+text_sensor:
+  - platform: template
+    id: Boot_Slot_Text
+    name: "Boot Slot"
+    icon: mdi:chip
+    update_interval: 60s
+    lambda: 'return {erb_boot_slot()};'
+# End

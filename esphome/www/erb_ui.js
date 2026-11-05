@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104n
+// Rev: 20261104o
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
   var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104n';
+  var Rev = '20261104o';
   var Cmt = '';   // esphome comment (= Build_Name) from the /events ping config: fallback if Build Name state is empty
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
@@ -90,7 +90,7 @@
         '<div class="Ctr" style="font-size:12px;margin-top:6px">Firmware: <span id="homeFw">--</span></div>';
     },
     info: function () {
-      return '<pre>' + Row('Build Name', 'text_sensor/Build Name') + '<b>Upload File</b>: <span id="infoFile">--</span>\n' + Row('Build Time', 'text_sensor/Build Time') + Row('ESPHome', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
+      return '<pre>' + Row('Build Name', 'text_sensor/Build Name') + '<b>Upload File</b>: <span id="infoFile">--</span>\n' + Row('Build Time', 'text_sensor/Build Time') + (S['text_sensor/Boot Slot'] ? Row('Boot Slot', 'text_sensor/Boot Slot') : '') + Row('ESPHome', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
         Row('Reset Reason', 'text_sensor/Reset Reason') + Row('Device', 'text_sensor/Device Info') +
         Row('IP Address', 'text_sensor/IP Address') + Row('SSID', 'text_sensor/Connected SSID') + Row('BSSID', 'text_sensor/Connected BSSID') +
         Row('RSSI', 'sensor/WiFi Signal') + Row('MAC', 'text_sensor/MAC Address') + Row('Free Heap', 'sensor/Free Heap') +
@@ -113,6 +113,7 @@
         '<b>REST (like the old /t/redled, /q/... links):</b>\n  POST /switch/Red LED/toggle     = Toggle Red Led\n  POST /switch/Red LED/turn_on    = Turn Red Led ON\n' +
         '  POST /switch/Red LED/turn_off   = Turn Red Led OFF\n  GET  /sensor/Free Heap          = Free Heap (JSON)\n  GET  /text_sensor/IP Address    = IP (JSON)\n' +
         '  GET  /events                    = Live event stream\n\nAll pages update live; no refresh or slider needed.\n' +
+        '<b>Boot Slot</b> (ESP32): app0/app1 = flash slot running now.\n  (USB/factory) = factory .bin written over USB at 0x0 (it blanks otadata)\n  (OTA)         = got there by an OTA upload; a 2nd OTA lands back in app0\n  Writing only an .ota.bin over USB (at 0x10000) is NOT detected as USB.\n\n' +
         'mDNS name: <b>' + Esc(location.hostname) + '</b></pre>';
     },
     all: function () {
@@ -141,6 +142,7 @@
     if ($('homeFw')) $('homeFw').textContent = bn ? bn + '.factory.bin / .ota.bin' : '--';
     var bt = V('text_sensor/Build Time'), up = N('sensor/Uptime');
     if ($('ftTime')) $('ftTime').textContent = (bt && bt != '--') ? bt : '--';
+    var sl = V('text_sensor/Boot Slot'); if ($('ftSlot')) $('ftSlot').textContent = (sl && sl != '--') ? sl : '--';
     if ($('ftUp')) $('ftUp').textContent = isNaN(up) ? '--' : (function (t) { t = Math.floor(t); function P(n) { return (n < 10 ? '0' : '') + n; } return Math.floor(t / 86400) + 'd ' + P(Math.floor(t / 3600) % 24) + ':' + P(Math.floor(t / 60) % 60) + ':' + P(t % 60); })(up);
     if ($('infoFile')) $('infoFile').textContent = bn ? bn + '.ota.bin' : '--';
     SetInst('gHeap', fh, isNaN(fh) ? '--' : fh.toFixed(1));
@@ -218,7 +220,7 @@
   }
   function Start() {
     document.body.innerHTML = '<h1 id="erbTitle">ERB EspWebServer<small>ERB\'s Esp Experimental Web Server (ESPHome) - <span id="Conn">connecting</span></small></h1>' +
-      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:11px;color:#444">WA0UWH - ERB-EspWebServer<br>Rev ' + Rev + ' | Built <span id="ftTime">--</span> | Up <span id="ftUp">--</span></div>';
+      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:11px;color:#444">WA0UWH - ERB-EspWebServer<br>Rev ' + Rev + ' | Built <span id="ftTime">--</span> | Slot <span id="ftSlot">--</span> | Up <span id="ftUp">--</span></div>';
     S['x/rev'] = { state: Rev };
     Show('home'); Connect(); setInterval(Tick, 1000); setInterval(DrawLine, 10000);
   }

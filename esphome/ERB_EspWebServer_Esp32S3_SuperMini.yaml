@@ -21,6 +21,7 @@ packages:
   common: !include common/ERB_Common.yaml
   leds: !include common/ERB_Leds_Rgb.yaml
   heartbeat: !include common/ERB_Heartbeat.yaml
+  boot_slot: !include common/ERB_BootSlot.yaml
 
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.

@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104n
+// Rev: 20261104o
 // Shoot_Tabs - headless screenshots of each ERB UI tab against Mock_Server.js.
 const puppeteer = require('/workspace/repos/grok-voice-reader-extension/chrome-extension/node_modules/puppeteer-core');
 const Out = require('path').join(__dirname, '..', 'screens') + (process.env.MOCK_NO_LEDS ? '/PlainLed48' : '');
@@ -18,7 +18,7 @@ require('fs').mkdirSync(Out, { recursive: true });
   let n = 2;
   for (const t of ['info', 'admin', 'help', 'all']) {
     await p.click(`[data-pg="${t}"]`); await new Promise(r => setTimeout(r, 700));
-    if (t == 'info') console.log('INFO', await p.$eval('#infoFile', e => e.textContent), '|', (await p.$eval('#erbPage', e => e.innerText)).split('\n').filter(l => /Build/.test(l)).join(' / '));
+    if (t == 'info') console.log('INFO', await p.$eval('#infoFile', e => e.textContent), '|', (await p.$eval('#erbPage', e => e.innerText)).split('\n').filter(l => /Build|Boot Slot/.test(l)).join(' / '));
     if (t == 'admin') console.log('RUNNING', await p.$eval('#otaF', e => e.innerText.split('Running:')[1]));
     await p.screenshot({ path: `${Out}/${n++}_${t[0].toUpperCase() + t.slice(1)}.png`, fullPage: true });
   }
@@ -26,7 +26,7 @@ require('fs').mkdirSync(Out, { recursive: true });
   await p.click(`[data-pg="home"]`); await p.click('[data-led="Heartbeat"]'); await new Promise(r => setTimeout(r, 500));
   await p.click(`[data-pg="admin"]`);
   const Dlg = []; p.on('dialog', d => Dlg.push(d.message().split('\n')[0]));
-  const Fw = '/tmp/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104n.ota.bin'; require('fs').writeFileSync(Fw, Buffer.alloc(4096, 7));
+  const Fw = '/tmp/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104o.ota.bin'; require('fs').writeFileSync(Fw, Buffer.alloc(4096, 7));
   await (await p.$('#otaFile')).uploadFile(Fw);
   console.log('CHOSEN', await p.$eval('#otaName', e => e.textContent));
   await p.click('#otaF button'); await new Promise(r => setTimeout(r, 1000));
