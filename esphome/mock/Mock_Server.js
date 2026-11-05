@@ -1,14 +1,18 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104l
+// Rev: 20261104m
 // Mock_Server - fakes the ESPHome v3 web_server (index, /0.js, /events SSE, POST actions)
 // (basic auth guest:grest only when MOCK_AUTH=1) so www/erb_ui.js can be tested in a browser. Usage: node Mock_Server.js [port]
 const http = require('http'), fs = require('fs'), path = require('path');
 const Port = +process.argv[2] || 8099;
 const JS = path.join(__dirname, '..', 'www', 'erb_ui.js');
+// 20261104m: match the real device. Build Name/Time are ''-state unless the firmware publishes them
+// (rev l and older: never published -> MOCK_BUILD_TS=0). ping carries esphome comment = Build_Name (rev m+; MOCK_COMMENT=0 = rev l).
+const BuildName = process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104m' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104m';
+const Pub = process.env.MOCK_BUILD_TS !== '0', Cmt = process.env.MOCK_COMMENT !== '0' ? BuildName : '';
 const S = {
   'sensor/Free Heap': [23456, '23456 B'], 'sensor/Vdd': [3.29, '3.29 V'], 'sensor/WiFi Signal': [-61, '-61 dBm'],
   'sensor/Uptime': [3725, '3725 s'], 'sensor/Heap Max Block': [18000, '18000 B'], 'sensor/Loop Time': [16, '16 ms'],
-  'text_sensor/ESPHome Version': [null, '2026.10.2'], 'text_sensor/Build Name': [null, process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104l' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104l'], 'text_sensor/Build Time': [null, '2026-11-04 17:55:00 -0800'], 'text_sensor/Reset Reason': [null, 'Power On'],
+  'text_sensor/ESPHome Version': [null, '2026.10.2'], 'text_sensor/Build Name': [null, Pub ? BuildName : ''], 'text_sensor/Build Time': [null, Pub ? '2026-11-04 20:40:00 -0800' : ''], 'text_sensor/Reset Reason': [null, 'Power On'],
   'text_sensor/Device Info': [null, '2026.10.2|Flash: 4096kB Speed:40MHz Mode:DIO|Chip: 0x00E42F'],
   'text_sensor/IP Address': [null, '10.10.10.42'], 'text_sensor/Connected SSID': [null, 'MockNet'],
   'text_sensor/Connected BSSID': [null, 'AA:BB:CC:DD:EE:FF'], 'text_sensor/MAC Address': [null, '5C:CF:7F:12:34:56'],
@@ -48,7 +52,7 @@ http.createServer((q, r) => {
   
   if (u === '/events') {
     r.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' });
-    r.write(`event: ping\ndata: ${JSON.stringify({ title: 'ERB EspWebServer' })}\n\n`);
+    r.write(`event: ping\ndata: ${JSON.stringify({ title: 'ERB EspWebServer', comment: Cmt })}\n\n`);
     Object.keys(S).forEach(k => r.write(Msg(k).replace('event: state', 'event: state_detail_all')));
     Clients.add(r); q.on('close', () => Clients.delete(r)); return;
   }

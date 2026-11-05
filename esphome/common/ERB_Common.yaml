@@ -9,6 +9,18 @@
 esphome:
   name: ${Device_Name}
   friendly_name: ${Friendly_Name}
+  # 20261104m: comment = Build_Name; web_server sends it in the /events "ping" config (get_config_json),
+  # so the page can show the firmware name even before the Build Name text_sensor arrives.
+  comment: "${Build_Name}"
+  # 20261104m: publish Build Name/Time at boot (template text_sensors do NOT update in setup()).
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(Build_Name_Text).publish_state("${Build_Name}");
+          char buf[esphome::Application::BUILD_TIME_STR_SIZE];
+          App.get_build_time_string(buf);
+          id(Build_Time_Text).publish_state(buf);
   project:
     name: wa0uwh.erb_espwebserver
     version: "${Rev}"
@@ -96,14 +108,14 @@ text_sensor:
     id: Build_Name_Text
     name: "Build Name"
     icon: mdi:package-variant
-    update_interval: never
+    update_interval: 60s   # 20261104m: was 'never' -> state stayed empty, page showed '--'
     lambda: 'return {"${Build_Name}"};'
   # Compile date/time from the build host (box clock is Pacific), e.g. 2026-11-04 17:55:00 -0800
   - platform: template
     id: Build_Time_Text
     name: "Build Time"
     icon: mdi:clock-check-outline
-    update_interval: never
+    update_interval: 60s   # 20261104m: was 'never'
     lambda: |-
       char buf[esphome::Application::BUILD_TIME_STR_SIZE];
       App.get_build_time_string(buf);

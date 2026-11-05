@@ -1,11 +1,12 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104l
+// Rev: 20261104m
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
-  var Hist_Min = 30, Hist = [], Spark = [], LongH = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104l';
+  var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
+  var Rev = '20261104m';
+  var Cmt = '';   // esphome comment (= Build_Name) from the /events ping config: fallback if Build Name state is empty
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
     '.Nav{width:100%;border-collapse:collapse}.Nav td{padding:2px}.Nav a{color:#00e;cursor:pointer;text-decoration:underline}' +
@@ -17,6 +18,7 @@
 
   function $(i) { return document.getElementById(i); }
   function V(n) { var e = S[n]; return e ? e.state : '--'; }
+  function BN() { var b = V('text_sensor/Build Name'); return (b && b != '--') ? b : Cmt; }   // '' if unknown
   function N(n) { var e = S[n]; return e && typeof e.value === 'number' ? e.value : NaN; }
   function Esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function Post(url) { return fetch(url, { method: 'POST' }); }
@@ -102,7 +104,7 @@
         '<button data-act="button/Restart (Safe Mode)/press" data-q="Reboot into Safe Mode (OTA only)?">Safe Mode</button>' +
         (S['button/Clear Heap History'] ? '<button data-act="button/Clear Heap History/press" data-q="Clear the heap history saved on the device?">Clear heap history</button>' : '') + '</div>' +
         '<pre><b>WiFi Scan</b>\n<span id="v_text_sensor_WiFi_Scan">' + Esc(V('text_sensor/WiFi Scan')) + '</span></pre>' +
-        '<form id="otaF"><b>Firmware update</b> (.ota.bin): <input type="file" id="otaFile" accept=".bin"> <button type="submit">Upload</button><br>Chosen: <b id="otaName">none</b> <span id="otaMsg"></span><br>Running: <b>' + Esc(V('text_sensor/Build Name')) + '</b></form>' +
+        '<form id="otaF"><b>Firmware update</b> (.ota.bin): <input type="file" id="otaFile" accept=".bin"> <button type="submit">Upload</button><br>Chosen: <b id="otaName">none</b> <span id="otaMsg"></span><br>Running: <b>' + Esc(BN() || '--') + '</b></form>' +
         '<p>To change networks: if the device cannot join its WiFi it starts hotspot <b>ERB-EspWebServer-Setup</b>. Join it and a captive portal page lets you pick a new network.</p>';
     },
     help: function () {
@@ -134,14 +136,12 @@
   function Refresh() {
     var fh = N('sensor/Free Heap') / 1000;
     $('navStat').textContent = (isNaN(fh) ? '--' : fh.toFixed(3)) + ' - ' + Hits + ' - ' + Rev;
-    var bn = V('text_sensor/Build Name'); bn = (bn && bn != '--') ? bn : '';
+    var bn = BN();
     if ($('ftBuild')) $('ftBuild').textContent = bn || '--';
     if ($('homeFw')) $('homeFw').textContent = bn ? bn + '.factory.bin / .ota.bin' : '--';
     var bt = V('text_sensor/Build Time'), up = N('sensor/Uptime');
     if ($('ftTime')) $('ftTime').textContent = (bt && bt != '--') ? bt : '--';
     if ($('ftUp')) $('ftUp').textContent = isNaN(up) ? '--' : (function (t) { t = Math.floor(t); function P(n) { return (n < 10 ? '0' : '') + n; } return Math.floor(t / 86400) + 'd ' + P(Math.floor(t / 3600) % 24) + ':' + P(Math.floor(t / 60) % 60) + ':' + P(t % 60); })(up);
-    if ($('ftHeap')) $('ftHeap').textContent = isNaN(fh) ? '--' : fh.toFixed(1) + ' kB';
-    DrawSpark();
     if ($('infoFile')) $('infoFile').textContent = bn ? bn + '.ota.bin' : '--';
     SetInst('gHeap', fh, isNaN(fh) ? '--' : fh.toFixed(1));
     var t = IsS3() ? 'sensor/Chip Temp' : 'sensor/Vdd'; SetInst('gVdd', N(t), V(t));
@@ -161,34 +161,6 @@
       hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' }).formatToParts(d).forEach(function (p) { o[p.type] = p.value; });
     o.hour = o.hour == '24' ? '00' : o.hour; return o;
   }
-  function DrawSpark() {
-    var g = $('spark'), t = $('spkTxt'); if (!g) return;
-    var up = $('ftUp') ? $('ftUp').textContent : '--';
-    if (Spark.length < 2) { g.innerHTML = ''; t.textContent = 'Heap -- | Up ' + up; return; }
-    var mn = Math.min.apply(null, Spark), mx = Math.max.apply(null, Spark), cur = Spark[Spark.length - 1], r = (mx - mn) || 1, W = 300, H = 40, n = Spark.length, mi = Spark.indexOf(mn);
-    function X(i) { return (i * (W - 4) / (n - 1) + 2).toFixed(1); } function Y(v) { return (H - 10 - (v - mn) / r * (H - 14) + 2).toFixed(1); }
-    g.innerHTML = '<polyline fill="none" stroke="#c00" stroke-width="1" points="' + Spark.map(function (v, i) { return X(i) + ',' + Y(v); }).join(' ') + '"/>' +
-      '<circle cx="' + X(mi) + '" cy="' + Y(mn) + '" r="2" fill="#00c"/>' +
-      '<text x="3" y="38" font-size="9" fill="#444">min ' + mn.toFixed(1) + ' max ' + mx.toFixed(1) + ' now ' + cur.toFixed(1) + ' kB</text>';
-    t.textContent = 'Heap ' + cur.toFixed(1) + ' kB (10 min) | Up ' + up;
-  }
-  function LoadLong() {   // on-device history (NVS ring), GET /heap_history.csv: stamp,free,minfree,boot
-    fetch('/heap_history.csv', { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
-      LongH = t.split('\n').slice(1).filter(Boolean).map(function (l) { var a = l.split(','); return [+a[0], a[1] / 1000, a[2] / 1000, +a[3]]; });
-      DrawLong();
-    }).catch(function () { LongH = []; DrawLong(); });
-  }
-  function DrawLong() {
-    var g = $('sparkL'), t = $('spkLTxt'); if (!g) return;
-    if (LongH.length < 2) { g.innerHTML = '<text x="3" y="24" font-size="9" fill="#444">device history: ' + (LongH.length ? '1 sample' : 'none yet') + '</text>'; t.textContent = ''; return; }
-    var v = LongH.map(function (e) { return e[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), r = (mx - mn) || 1, W = 300, H = 40, n = v.length;
-    var lo = Math.min.apply(null, LongH.map(function (e) { return e[2]; }));
-    function X(i) { return (i * (W - 4) / (n - 1) + 2).toFixed(1); } function Y(x) { return (H - 10 - (x - mn) / r * (H - 14) + 2).toFixed(1); }
-    var bm = ''; for (var i = 1; i < n; i++) if (LongH[i][3] != LongH[i - 1][3]) bm += '<line x1="' + X(i) + '" y1="0" x2="' + X(i) + '" y2="' + H + '" stroke="#090" stroke-width="1" stroke-dasharray="2,2"/>';
-    g.innerHTML = bm + '<polyline fill="none" stroke="#00c" stroke-width="1" points="' + v.map(function (x, i) { return X(i) + ',' + Y(x); }).join(' ') + '"/>' +
-      '<text x="3" y="38" font-size="9" fill="#444">device ' + n + ' min: min ' + mn.toFixed(1) + ' max ' + mx.toFixed(1) + ' kB, low-water ' + lo.toFixed(1) + '</text>';
-    t.textContent = 'Device log ' + (n / 60).toFixed(1) + ' h (green = reboot)';
-  }
   function Tick() {
     var p = Pac(new Date()), h = +p.hour, m = +p.minute, sec = +p.second;
     var txt = p.year + '-' + p.month + '-' + p.day + ' ' + p.hour + ':' + p.minute + ':' + p.second + ' ' + p.timeZoneName;
@@ -204,12 +176,12 @@
     if (t.dataset.pg) return Show(t.dataset.pg);
     if (t.dataset.led) return Post('/switch/' + Enc(t.dataset.led) + '/toggle');
     if (t.dataset.q && !confirm(t.dataset.q)) return;
-    Post('/' + Enc(t.dataset.act)).then(function () { if (t.dataset.act.indexOf('Clear Heap') >= 0) setTimeout(LoadLong, 1500); });
+    Post('/' + Enc(t.dataset.act));
   });
   document.addEventListener('submit', function (ev) {
     if (ev.target.id != 'otaF') return; ev.preventDefault();
     var f = $('otaFile').files[0]; if (!f) return;
-    var run = V('text_sensor/Build Name'), want = Board(f.name), have = Board(run);
+    var run = BN() || '--', want = Board(f.name), have = Board(run);
     if (run != '--' && want != have && !confirm('WARNING: board/variant mismatch!\n  File:    ' + want + '\n  Running: ' + have + '\nUpload anyway?')) return;
     if (!confirm('Upload ' + f.name + ' and reboot?')) return;
     var fd = new FormData(); fd.append('update', f, f.name); $('otaMsg').textContent = 'uploading...';
@@ -225,10 +197,10 @@
   function OnState(ev) {
     var d; try { d = JSON.parse(ev.data); } catch (e) { return; }
     var k = d.name_id || d.id; if (!k) return;
+    if (k == 'text_sensor/Build Name' && !d.state && Cmt) d.state = Cmt;   // device sent '' -> use ping comment
     var isNew = !S[k]; S[k] = d;
     if (k == 'sensor/Free Heap' && typeof d.value == 'number') {
       Hist.push([Date.now(), d.value]);
-      Spark.push(d.value / 1000); if (Spark.length > 300) Spark.shift();   // ~10 min rolling, browser memory only
       while (Hist.length && Hist[0][0] < Date.now() - 60 * 60000) Hist.shift();
     }
     if (isNew && (Page == 'all' || Page == 'info' || (Page == 'home' && (k == 'sensor/Chip Temp' || k.indexOf('switch/') == 0)))) Show(Page); else Refresh();
@@ -239,15 +211,16 @@
     es.addEventListener('state_detail_all', OnState);
     es.addEventListener('ping', function (ev) {
       $('Conn').textContent = 'live';
-      try { var c = JSON.parse(ev.data); if (c.title) { document.title = c.title; $('erbTitle').firstChild.textContent = c.title; } } catch (e) {}
+      try { var c = JSON.parse(ev.data); if (c.title) { document.title = c.title; $('erbTitle').firstChild.textContent = c.title; }
+        if (c.comment && /^ERB_/.test(c.comment)) { Cmt = c.comment; var e = S['text_sensor/Build Name']; if (e && !e.state) e.state = Cmt; Refresh(); } } catch (e) {}
     });
     es.onerror = function () { $('Conn').textContent = 'reconnecting...'; };
   }
   function Start() {
     document.body.innerHTML = '<h1 id="erbTitle">ERB EspWebServer<small>ERB\'s Esp Experimental Web Server (ESPHome) - <span id="Conn">connecting</span></small></h1>' +
-      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:11px;color:#444"><svg id="spark" width="300" height="40" style="vertical-align:middle;background:#eef;border:1px solid #bbc"></svg> <span id="spkTxt">--</span> <svg id="sparkL" width="300" height="40" style="vertical-align:middle;background:#eef;border:1px solid #bbc"></svg> <span id="spkLTxt"></span></div><div class="Ctr" style="font-size:11px;color:#444">WA0UWH - ERB-EspWebServer<br>Firmware <span id="ftBuild">--</span> | Built <span id="ftTime">--</span> | Rev ' + Rev + ' | Up <span id="ftUp">--</span> | Heap <span id="ftHeap">--</span></div>';
+      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:11px;color:#444">WA0UWH - ERB-EspWebServer<br>Firmware <span id="ftBuild">--</span> | Rev ' + Rev + ' | Built <span id="ftTime">--</span> | Up <span id="ftUp">--</span></div>';
     S['x/rev'] = { state: Rev };
-    Show('home'); Connect(); LoadLong(); setInterval(LoadLong, 300000); setInterval(Tick, 1000); setInterval(DrawLine, 10000);
+    Show('home'); Connect(); setInterval(Tick, 1000); setInterval(DrawLine, 10000);
   }
   if (document.readyState == 'loading') document.addEventListener('DOMContentLoaded', Start); else Start();
 })();
