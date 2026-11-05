@@ -1,9 +1,9 @@
-<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104f -->
+<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104g -->
 # Flash the ESP32-S3 Super Mini (first time, no ESPHome install)
 
 You need: Chrome or Brave on a computer, a USB-C **data** cable, and the file
 a `.factory.bin` file. Two versions for the S3 Super Mini:
-- **Use first:** `ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f.factory.bin` (plain LED on GPIO48). On Eldon's HW-747 the Ws2812 build left the LED dark.
+- **Use first:** `ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f.factory.bin` (plain LED on GPIO48), confirmed working on Eldon's HW-747. (Eldon's private 20261104g build has his WiFi built in and is not published.)
 - **Other:** `ERB_EspWebServer_Esp32S3_SuperMini_Ws2812_20261104f.factory.bin` (boards with an RGB LED on GPIO48).
 
 The loaded file name (Build Name) shows in the page footer and on the Info tab, together with the build time.

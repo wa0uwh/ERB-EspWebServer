@@ -1,6 +1,13 @@
 <!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104 -->
 # ERB_EspWebServer ESPHome - notes (newest first)
 
+## 2026-11-04 06:25 PM PST - Rev 20261104g (S3 PlainLed48 only)
+- PlainLed48 f works on Eldon's HW-747; the red GPIO48 heartbeat is OK.
+- WiFi now compiled in from secrets.yaml (real values, chmod 600, never printed or committed). Reason: WiFi saved by improv was lost after each new config, because the config_version_hash changed.
+- The g bins contain the WiFi credentials, so they stay out of git (esphome/.gitignore: *.bin, secrets.yaml, .esphome/). Local bins are chmod 600.
+- Compile: RAM 107,563 B (31.5%), Flash 866,979 B (47.2%). flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104g factory + ota, Rev_20261104g.txt.
+- The NodeMcu and Ws2812 builds were not rebuilt (still 20261104f).
+
 ## 2026-11-04 06:00 PM PST - Rev 20261104f (Build Name on the page)
 - Eldon: the Ws2812 e build left GPIO48 dark, so he is trying PlainLed48. He asked to see the full bin name on the page.
 - Each board file now has substitutions Rev + Build_Name (= the bin base name): ERB_EspWebServer_Esp8266_NodeMcu_20261104f, ERB_EspWebServer_Esp32S3_SuperMini_Ws2812_20261104f, ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f. The project version comes from ${Rev}.
@@ -70,3 +77,9 @@
 ## 2026-11-04 2:52 PM PST
 - Eldon flashed the S3 Super Mini (HW-747) using web.esphome.io, and it now runs live on his network. Pacific clock, heap gauge (255 kB), Chip Temp (62 C) and the history graph all work. Chip: ESP32-S3 QFN56 rev v0.2, 4MB flash (XMC), 2MB quad PSRAM (AP_3v3).
 - Next build: enable PSRAM (quad), widen the Chip Temp gauge past 80 C. The hotspot password is still the dummy value.
+
+## 2026-11-04 6:06 PM PST - Diagnosis: S3 bright 1 Hz red blink, no web page after PlainLed48 f upload
+- The red LED is on GPIO48 and is our heartbeat. A bright 1 s on/1 s off blink = the "WiFi NOT connected" else-branch (common/ERB_Common.yaml lines 169-172). The app is running; there is no panic or bootloop.
+- Cause: the WiFi credentials were entered with improv and saved under App.get_config_version_hash() (esphome wifi_component.cpp:693-695). Any config change (rev, Build_Name, variant) changes the hash, so the new firmware forgets them. secrets.yaml WiFi values are dummy, so there is nothing to fall back on.
+- Fallback AP "ERB-EspWebServer-Setup" comes up, but its password is the dummy, which Eldon does not know.
+- Fix now: USB to web.esphome.io > Connect > Configure WiFi (improv); no reflash needed. Permanent fix: real WiFi in secrets.yaml and/or a known AP password.
