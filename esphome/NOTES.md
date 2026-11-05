@@ -1,6 +1,13 @@
 <!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104 -->
 # ERB_EspWebServer ESPHome - notes (newest first)
 
+## 2026-11-04 05:45 PM PST - Rev 20261104e (S3 only; NodeMCU stays 20261104d)
+- Eldon: the onboard blue LED blinks about 1/s even with Heartbeat off. That is the battery-charge LED and firmware can't control it (confirmed: fomenko.kyiv.ua/esp32-s3-super-mini-led-rgb-red-blue/ : BLUE = charge, RED = direct on GP48, RGB WS2812 on GP48). Heartbeat was going to IO6 with nothing attached. Eldon said "move it" to GPIO48.
+- Ws2812 build: esp32_rmt_led_strip Onboard_Rgb (GPIO48, GRB, 1 LED, internal, 0 s transition). The S3 file uses "!extend Blu_LED" to add on_turn_on (blue, 40%) and on_turn_off, so the common heartbeat and Heartbeat-OFF drive the WS2812 and IO6 together. common/ is unchanged.
+- PlainLed48 build: Blu_LED moved to GPIO48 as a plain gpio, inverted: false (active-high guess; the red LED on GP48 shows "ON when output is stable").
+- Compile: Ws2812 RAM 111,035 B (32.5%), Flash 904,327 B (49.3%). PlainLed48 RAM 107,427 B (31.4%), Flash 866,335 B (47.2%).
+- flash/: ..._Ws2812_20261104e and ..._PlainLed48_20261104e factory + ota bins, Rev_20261104e.txt, ERB_S3_SuperMini_Full_20261104e.yaml.
+
 ## 2026-11-04 03:25 PM PST - Rev 20261104d (web login removed)
 - Eldon tried guest/guest (we had guest/grest) and asked to remove the login for now. The web_server auth block is commented out in common/ with a re-enable note. The docs no longer mention a login. secrets.yaml.example web_password is now a placeholder.
 - Mock: auth only when MOCK_AUTH=1. Re-test without auth: LED, Heartbeat, Reboot, upload and /events all OK, no JS errors.

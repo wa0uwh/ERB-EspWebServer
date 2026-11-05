@@ -1,8 +1,10 @@
-<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104d -->
+<!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104e -->
 # Flash the ESP32-S3 Super Mini (first time, no ESPHome install)
 
 You need: Chrome or Brave on a computer, a USB-C **data** cable, and the file
-`ERB_EspWebServer_Esp32S3_SuperMini_20261104d.factory.bin`.
+a `.factory.bin` file. Two versions, try them in this order:
+- **First:** `ERB_EspWebServer_Esp32S3_SuperMini_Ws2812_20261104e.factory.bin` (the onboard RGB LED blinks blue).
+- **If the onboard LED never blinks:** `ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104e.factory.bin` (for boards with a plain LED on GPIO48).
 
 1. Plug the Super Mini into the computer with the USB-C cable.
 2. Open **https://web.esphome.io** in Chrome or Brave.
@@ -16,8 +18,9 @@ You need: Chrome or Brave on a computer, a USB-C **data** cable, and the file
 If the board can't join WiFi, it makes its own hotspot **ERB-EspWebServer-Setup**.
 Join it from a phone, and a setup page opens where you can pick your WiFi network.
 
-Blue LED (IO6) heartbeat: slow 1 s on / 1 s off = no WiFi yet; quick double-blink every 2 s = WiFi connected.
+Heartbeat on the onboard LED (GPIO48, also mirrored on IO6): slow 1 s on / 1 s off = no WiFi yet; quick double-blink every 2 s = WiFi connected.
 Turn it off with the **Heartbeat** button on Home.
+The small blue LED that blinks about once a second even with Heartbeat off is the charge LED. Firmware can't control it.
 
 ## Updating later (no USB) - Rev 20261104b and newer (current 20261104d)
 1. Open http://erb-espwebserver-s3.local/ and click **Admin**.

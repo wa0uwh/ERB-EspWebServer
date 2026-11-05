@@ -1,5 +1,5 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104d
+# Rev: 20261104e
 # ERB_EspWebServer for ESP32-S3 Super Mini (HW-747 V0.0.2). Shared UI + entities in common/.
 # Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
 # Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
@@ -20,7 +20,7 @@ packages:
 esphome:
   project:
     name: wa0uwh.erb_espwebserver
-    version: "20261104d"
+    version: "20261104e"
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
 # No web login right now, so anyone on the LAN could upload firmware (see auth note in common/).
@@ -58,13 +58,27 @@ sensor:
     psram:
       name: "PSRAM Free"
 
-# Optional onboard WS2812 RGB LED on GPIO48:
-# light:
-#   - platform: esp32_rmt_led_strip
-#     rgb_order: GRB
-#     pin: GPIO48
-#     num_leds: 1
-#     chipset: ws2812
-#     name: "Onboard RGB"
+# Onboard WS2812 RGB LED on GPIO48 (internal: hidden from the web UI).
+# If your board has a plain LED on GPIO48 instead, use ..._PlainLed48.yaml.
+light:
+  - platform: esp32_rmt_led_strip
+    id: Onboard_Rgb
+    internal: true
+    rgb_order: GRB
+    pin: GPIO48
+    num_leds: 1
+    chipset: ws2812
+    default_transition_length: 0s   # needed for the 80 ms heartbeat blinks
+    restore_mode: ALWAYS_OFF
+
+# Mirror the Blue LED (IO6) onto the onboard WS2812. Same id as in common/, so ESPHome
+# merges these triggers into that switch. The heartbeat (and the manual Blue LED button)
+# therefore light the WS2812 blue; Heartbeat OFF turns Blue LED, and so the WS2812, off.
+switch:
+  - id: !extend Blu_LED
+    on_turn_on:
+      - light.turn_on: { id: Onboard_Rgb, red: 0%, green: 0%, blue: 100%, brightness: 40% }
+    on_turn_off:
+      - light.turn_off: Onboard_Rgb
 
 # End
