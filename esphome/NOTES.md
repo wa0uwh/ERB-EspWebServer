@@ -102,3 +102,10 @@
 - Mock checked (no JS errors), screens/PlainLed48/ refreshed.
 - flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104j.ota.bin (867024 B), .factory.bin (932560 B), Rev_20261104j.txt. Credentials baked in from secrets.yaml. NodeMCU + Ws2812 compile OK (no bins).
 - Note: PlainLed48 and Ws2812 share build dir erb-espwebserver-s3; compile PlainLed48 LAST before copying bins.
+
+## 2026-11-04 7:39 PM PST - Rev 20261104k: Home firmware line, developer footer, heap sparkline
+- Home: under LED Control/Heartbeat, small line "Firmware: <Build Name>.factory.bin / .ota.bin" (id homeFw, Refresh(), '--' if empty).
+- Footer: "WA0UWH - ERB-EspWebServer" then "Firmware <Build Name> | Built <Build Time> | Rev | Up d hh:mm:ss | Heap kB" (ftBuild/ftTime/ftUp/ftHeap, live in Refresh()).
+- Above footer: 300x40 SVG heap sparkline (Spark[], last 300 Free Heap samples ~10 min, browser memory only), min/max/now text, blue min marker, uptime text beside it. Home history graph unchanged.
+- Mock checked (no JS errors), screens/PlainLed48/ refreshed. Full compile log flash/Build_20261104k.log (no warnings, no secrets).
+- flash/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104k.factory.bin (933232 B), .ota.bin (867696 B), Rev_20261104k.txt. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.

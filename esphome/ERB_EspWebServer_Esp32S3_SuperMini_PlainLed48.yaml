@@ -1,5 +1,5 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104j
+# Rev: 20261104k - Home shows firmware file name
 # ERB_EspWebServer for ESP32-S3 Super Mini, PLAIN LED on GPIO48 variant (try if the WS2812 build stays dark). Shared UI + entities in common/.
 # Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
 # Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
@@ -7,8 +7,8 @@
 # GPIO48 = onboard WS2812 (shared with a red LED on some boards) - left for the optional light below.
 
 substitutions:
-  Rev: "20261104j"
-  Build_Name: ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104j   # must equal the bin base name
+  Rev: "20261104k"
+  Build_Name: ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104k   # must equal the bin base name
   Device_Name: erb-espwebserver-s3
   Friendly_Name: ERB EspWebServer S3
   Hb_Target: Heartbeat_LED   # heartbeat drives the onboard GPIO48 LED

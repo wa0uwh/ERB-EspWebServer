@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104j
+// Rev: 20261104k
 // Mock_Server - fakes the ESPHome v3 web_server (index, /0.js, /events SSE, POST actions)
 // (basic auth guest:grest only when MOCK_AUTH=1) so www/erb_ui.js can be tested in a browser. Usage: node Mock_Server.js [port]
 const http = require('http'), fs = require('fs'), path = require('path');
@@ -8,7 +8,7 @@ const JS = path.join(__dirname, '..', 'www', 'erb_ui.js');
 const S = {
   'sensor/Free Heap': [23456, '23456 B'], 'sensor/Vdd': [3.29, '3.29 V'], 'sensor/WiFi Signal': [-61, '-61 dBm'],
   'sensor/Uptime': [3725, '3725 s'], 'sensor/Heap Max Block': [18000, '18000 B'], 'sensor/Loop Time': [16, '16 ms'],
-  'text_sensor/ESPHome Version': [null, '2026.10.2'], 'text_sensor/Build Name': [null, process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104j' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104j'], 'text_sensor/Build Time': [null, '2026-11-04 17:55:00 -0800'], 'text_sensor/Reset Reason': [null, 'Power On'],
+  'text_sensor/ESPHome Version': [null, '2026.10.2'], 'text_sensor/Build Name': [null, process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104k' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104k'], 'text_sensor/Build Time': [null, '2026-11-04 17:55:00 -0800'], 'text_sensor/Reset Reason': [null, 'Power On'],
   'text_sensor/Device Info': [null, '2026.10.2|Flash: 4096kB Speed:40MHz Mode:DIO|Chip: 0x00E42F'],
   'text_sensor/IP Address': [null, '10.10.10.42'], 'text_sensor/Connected SSID': [null, 'MockNet'],
   'text_sensor/Connected BSSID': [null, 'AA:BB:CC:DD:EE:FF'], 'text_sensor/MAC Address': [null, '5C:CF:7F:12:34:56'],

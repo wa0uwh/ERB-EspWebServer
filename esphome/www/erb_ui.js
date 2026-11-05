@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104j
+// Rev: 20261104k
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
-  var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104j';
+  var Hist_Min = 30, Hist = [], Spark = [], S = {}, Page = 'home', Hits = 0;
+  var Rev = '20261104k';
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
     '.Nav{width:100%;border-collapse:collapse}.Nav td{padding:2px}.Nav a{color:#00e;cursor:pointer;text-decoration:underline}' +
@@ -84,7 +84,8 @@
         '<div class="Ctr" style="margin-top:10px"><b>LED Control</b><br>' +
         ['Red', 'Green', 'Blue'].filter(function (c) { return S['switch/' + c + ' LED']; }).map(function (c) { return '<button class="Led" data-led="' + c + ' LED">' + c + ' LED is <span>' + Esc(V('switch/' + c + ' LED')) + '</span></button>'; }).join('') +
         '<button class="Led" data-led="Heartbeat">Heartbeat is <span>' + Esc(V('switch/Heartbeat')) + '</span></button>' +
-        '<br>Input 1 is <b id="v_binary_sensor_Input_1">' + Esc(V('binary_sensor/Input 1')) + '</b></div>';
+        '<br>Input 1 is <b id="v_binary_sensor_Input_1">' + Esc(V('binary_sensor/Input 1')) + '</b></div>' +
+        '<div class="Ctr" style="font-size:12px;margin-top:6px">Firmware: <span id="homeFw">--</span></div>';
     },
     info: function () {
       return '<pre>' + Row('Build Name', 'text_sensor/Build Name') + '<b>Upload File</b>: <span id="infoFile">--</span>\n' + Row('Build Time', 'text_sensor/Build Time') + Row('ESPHome', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
@@ -134,6 +135,12 @@
     $('navStat').textContent = (isNaN(fh) ? '--' : fh.toFixed(3)) + ' - ' + Hits + ' - ' + Rev;
     var bn = V('text_sensor/Build Name'); bn = (bn && bn != '--') ? bn : '';
     if ($('ftBuild')) $('ftBuild').textContent = bn || '--';
+    if ($('homeFw')) $('homeFw').textContent = bn ? bn + '.factory.bin / .ota.bin' : '--';
+    var bt = V('text_sensor/Build Time'), up = N('sensor/Uptime');
+    if ($('ftTime')) $('ftTime').textContent = (bt && bt != '--') ? bt : '--';
+    if ($('ftUp')) $('ftUp').textContent = isNaN(up) ? '--' : (function (t) { t = Math.floor(t); function P(n) { return (n < 10 ? '0' : '') + n; } return Math.floor(t / 86400) + 'd ' + P(Math.floor(t / 3600) % 24) + ':' + P(Math.floor(t / 60) % 60) + ':' + P(t % 60); })(up);
+    if ($('ftHeap')) $('ftHeap').textContent = isNaN(fh) ? '--' : fh.toFixed(1) + ' kB';
+    DrawSpark();
     if ($('infoFile')) $('infoFile').textContent = bn ? bn + '.ota.bin' : '--';
     SetInst('gHeap', fh, isNaN(fh) ? '--' : fh.toFixed(1));
     var t = IsS3() ? 'sensor/Chip Temp' : 'sensor/Vdd'; SetInst('gVdd', N(t), V(t));
@@ -152,6 +159,17 @@
     var o = {}; new Intl.DateTimeFormat('en-US', { timeZone: Tz, hour12: false, year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' }).formatToParts(d).forEach(function (p) { o[p.type] = p.value; });
     o.hour = o.hour == '24' ? '00' : o.hour; return o;
+  }
+  function DrawSpark() {
+    var g = $('spark'), t = $('spkTxt'); if (!g) return;
+    var up = $('ftUp') ? $('ftUp').textContent : '--';
+    if (Spark.length < 2) { g.innerHTML = ''; t.textContent = 'Heap -- | Up ' + up; return; }
+    var mn = Math.min.apply(null, Spark), mx = Math.max.apply(null, Spark), cur = Spark[Spark.length - 1], r = (mx - mn) || 1, W = 300, H = 40, n = Spark.length, mi = Spark.indexOf(mn);
+    function X(i) { return (i * (W - 4) / (n - 1) + 2).toFixed(1); } function Y(v) { return (H - 10 - (v - mn) / r * (H - 14) + 2).toFixed(1); }
+    g.innerHTML = '<polyline fill="none" stroke="#c00" stroke-width="1" points="' + Spark.map(function (v, i) { return X(i) + ',' + Y(v); }).join(' ') + '"/>' +
+      '<circle cx="' + X(mi) + '" cy="' + Y(mn) + '" r="2" fill="#00c"/>' +
+      '<text x="3" y="38" font-size="9" fill="#444">min ' + mn.toFixed(1) + ' max ' + mx.toFixed(1) + ' now ' + cur.toFixed(1) + ' kB</text>';
+    t.textContent = 'Heap ' + cur.toFixed(1) + ' kB (10 min) | Up ' + up;
   }
   function Tick() {
     var p = Pac(new Date()), h = +p.hour, m = +p.minute, sec = +p.second;
@@ -192,6 +210,7 @@
     var isNew = !S[k]; S[k] = d;
     if (k == 'sensor/Free Heap' && typeof d.value == 'number') {
       Hist.push([Date.now(), d.value]);
+      Spark.push(d.value / 1000); if (Spark.length > 300) Spark.shift();   // ~10 min rolling, browser memory only
       while (Hist.length && Hist[0][0] < Date.now() - 60 * 60000) Hist.shift();
     }
     if (isNew && (Page == 'all' || Page == 'info' || (Page == 'home' && (k == 'sensor/Chip Temp' || k.indexOf('switch/') == 0)))) Show(Page); else Refresh();
@@ -208,7 +227,7 @@
   }
   function Start() {
     document.body.innerHTML = '<h1 id="erbTitle">ERB EspWebServer<small>ERB\'s Esp Experimental Web Server (ESPHome) - <span id="Conn">connecting</span></small></h1>' +
-      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:12px">WA0UWH - ERB-EspWebServer - Rev ' + Rev + ' - <span id="ftBuild">--</span></div>';
+      '<div id="erbNav"></div><hr><div id="erbPage"></div><hr><div class="Ctr" style="font-size:11px;color:#444"><svg id="spark" width="300" height="40" style="vertical-align:middle;background:#eef;border:1px solid #bbc"></svg> <span id="spkTxt">--</span></div><div class="Ctr" style="font-size:11px;color:#444">WA0UWH - ERB-EspWebServer<br>Firmware <span id="ftBuild">--</span> | Built <span id="ftTime">--</span> | Rev ' + Rev + ' | Up <span id="ftUp">--</span> | Heap <span id="ftHeap">--</span></div>';
     S['x/rev'] = { state: Rev };
     Show('home'); Connect(); setInterval(Tick, 1000); setInterval(DrawLine, 10000);
   }
