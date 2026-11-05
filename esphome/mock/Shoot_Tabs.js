@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104d
+// Rev: 20261104f
 // Shoot_Tabs - headless screenshots of each ERB UI tab against Mock_Server.js.
 const puppeteer = require('/workspace/repos/grok-voice-reader-extension/chrome-extension/node_modules/puppeteer-core');
 const Out = require('path').join(__dirname, '..', 'screens');
@@ -20,10 +20,13 @@ const Out = require('path').join(__dirname, '..', 'screens');
   await p.click(`[data-pg="admin"]`); await p.click('[data-act="button/Restart/press"]');
   await p.click(`[data-pg="home"]`); await p.click('[data-led="Heartbeat"]'); await new Promise(r => setTimeout(r, 500));
   await p.click(`[data-pg="admin"]`);
-  require('fs').writeFileSync('/tmp/Test_Fw.ota.bin', Buffer.alloc(4096, 7));
-  await (await p.$('#otaFile')).uploadFile('/tmp/Test_Fw.ota.bin');
+  const Dlg = []; p.on('dialog', d => Dlg.push(d.message().split('\n')[0]));
+  const Fw = '/tmp/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f.ota.bin'; require('fs').writeFileSync(Fw, Buffer.alloc(4096, 7));
+  await (await p.$('#otaFile')).uploadFile(Fw);
+  console.log('CHOSEN', await p.$eval('#otaName', e => e.textContent));
   await p.click('#otaF button'); await new Promise(r => setTimeout(r, 1000));
-  console.log('OTA MSG', await p.$eval('#otaMsg', e => e.textContent));
+  console.log('OTA MSG', await p.$eval('#otaMsg', e => e.textContent), 'DIALOGS', JSON.stringify(Dlg));
+  await p.click('[data-pg="admin"]'); await p.screenshot({ path: Out + '/3_Admin.png', fullPage: true });
   const nr = await fetch('http://127.0.0.1:8099/events'); console.log('NO-AUTH /events ->', nr.status);
   const posts = await (await fetch('http://127.0.0.1:8099/posts')).json();
   console.log('POSTS', JSON.stringify(posts), 'ERRORS', JSON.stringify(Errs));

@@ -1,6 +1,14 @@
 <!-- Authors: Grok and Eldon R. Brown - WA0UWH, Rev 20261104 -->
 # ERB_EspWebServer ESPHome - notes (newest first)
 
+## 2026-11-04 06:00 PM PST - Rev 20261104f (Build Name on the page)
+- Eldon: the Ws2812 e build left GPIO48 dark, so he is trying PlainLed48. He asked to see the full bin name on the page.
+- Each board file now has substitutions Rev + Build_Name (= the bin base name): ERB_EspWebServer_Esp8266_NodeMcu_20261104f, ERB_EspWebServer_Esp32S3_SuperMini_Ws2812_20261104f, ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f. The project version comes from ${Rev}.
+- common/: text_sensors "Build Name" (static ${Build_Name}) and "Build Time" (App.get_build_time_string; built on the box, so Pacific, e.g. "2026-11-04 17:56:xx -0800").
+- erb_ui.js: Build Name in the footer next to the Rev; Info shows Build Name + Build Time. Admin upload shows the Chosen file name and the Running build. It warns (with confirm) when the file's board/variant differs from the running Build_Name, ignoring the _YYYYMMDDx rev and .factory/.ota.bin. Mock test: warning fired for S3 file vs NodeMcu running, then the upload went OK.
+- Verified each ota.bin contains its own Build_Name string.
+- Compile: NodeMcu RAM 34,472 B (42.1%), Flash 411,569 B (39.4%). Ws2812 RAM 111,171 B (32.5%), Flash 905,003 B (49.3%). PlainLed48 RAM 107,563 B (31.5%), Flash 866,995 B (47.2%).
+
 ## 2026-11-04 05:45 PM PST - Rev 20261104e (S3 only; NodeMCU stays 20261104d)
 - Eldon: the onboard blue LED blinks about 1/s even with Heartbeat off. That is the battery-charge LED and firmware can't control it (confirmed: fomenko.kyiv.ua/esp32-s3-super-mini-led-rgb-red-blue/ : BLUE = charge, RED = direct on GP48, RGB WS2812 on GP48). Heartbeat was going to IO6 with nothing attached. Eldon said "move it" to GPIO48.
 - Ws2812 build: esp32_rmt_led_strip Onboard_Rgb (GPIO48, GRB, 1 LED, internal, 0 s transition). The S3 file uses "!extend Blu_LED" to add on_turn_on (blue, 40%) and on_turn_off, so the common heartbeat and Heartbeat-OFF drive the WS2812 and IO6 together. common/ is unchanged.

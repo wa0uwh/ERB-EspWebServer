@@ -1,17 +1,17 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104e
-# ERB_S3_SuperMini_Full - REVIEW COPY ONLY (not built). Concatenation of the shared
-# package, the S3 Super Mini (WS2812) board file, and the PlainLed48 alternative.
+# Rev: 20261104f
+# ERB_S3_SuperMini_Full - REVIEW COPY ONLY (not built). Shared package + the two S3
+# Super Mini board variants (each one builds as common + ONE board file).
 # Secrets shown as !secret (wifi, AP, OTA). Web login is off (auth block commented).
 
 # =====================================================================
 # SECTION 1: common/ERB_Common.yaml  (shared by all boards)
 # =====================================================================
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104d
+# Rev: 20261104f
 # ERB_Common - shared, board-independent part of the standalone ESPHome port of
 # github.com/wa0uwh/ERB-EspWebServer. No Home Assistant (no api: block).
-# Board files supply: Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
+# Board files supply: Rev, Build_Name (= the bin base name), Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
 # plus their own esp8266:/esp32: block and board-only sensors (Vdd or Chip Temp/PSRAM).
 
 esphome:
@@ -19,7 +19,7 @@ esphome:
   friendly_name: ${Friendly_Name}
   project:
     name: wa0uwh.erb_espwebserver
-    version: "20261104d"
+    version: "${Rev}"
 
 logger:
   level: INFO
@@ -98,6 +98,24 @@ text_sensor:
       name: "MAC Address"
     scan_results:
       name: "WiFi Scan"
+  # Which firmware is loaded: Build_Name equals the bin base name, e.g.
+  # ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f (.factory.bin / .ota.bin)
+  - platform: template
+    id: Build_Name_Text
+    name: "Build Name"
+    icon: mdi:package-variant
+    update_interval: never
+    lambda: 'return {"${Build_Name}"};'
+  # Compile date/time from the build host (box clock is Pacific), e.g. 2026-11-04 17:55:00 -0800
+  - platform: template
+    id: Build_Time_Text
+    name: "Build Time"
+    icon: mdi:clock-check-outline
+    update_interval: never
+    lambda: |-
+      char buf[esphome::Application::BUILD_TIME_STR_SIZE];
+      App.get_build_time_string(buf);
+      return {buf};
   - platform: template
     id: Clock_Text
     name: "Clock"
@@ -180,10 +198,82 @@ button:
 
 
 # =====================================================================
-# SECTION 2: ERB_EspWebServer_Esp32S3_SuperMini.yaml  (board file, WS2812 on GPIO48)
+# SECTION 2: ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48.yaml  (plain LED on GPIO48)
 # =====================================================================
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104e
+# Rev: 20261104f
+# ERB_EspWebServer for ESP32-S3 Super Mini, PLAIN LED on GPIO48 variant (try if the WS2812 build stays dark). Shared UI + entities in common/.
+# Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
+# Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
+# Pins used are all on the side headers: IO4/IO5/IO6 LEDs, IO7 input (no strap/USB/flash pins).
+# GPIO48 = onboard WS2812 (shared with a red LED on some boards) - left for the optional light below.
+
+substitutions:
+  Rev: "20261104f"
+  Build_Name: ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f   # must equal the bin base name
+  Device_Name: erb-espwebserver-s3
+  Friendly_Name: ERB EspWebServer S3
+  Red_Pin: GPIO4
+  Grn_Pin: GPIO5
+  Blu_Pin: GPIO48   # onboard plain LED; heartbeat drives it directly
+  In_Pin: GPIO7
+
+# packages: common -> see SECTION 1 above
+
+
+# Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
+# No web login right now, so anyone on the LAN could upload firmware (see auth note in common/).
+ota:
+  - platform: web_server
+
+esp32:
+  variant: esp32s3
+  board: esp32-s3-devkitc-1
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+# Logs over the native USB-C port (S3 built-in USB Serial/JTAG CDC, no UART chip on this board)
+logger:
+  level: INFO
+  hardware_uart: USB_SERIAL_JTAG
+
+# Lets web.esphome.io send WiFi credentials over USB right after flashing
+# (so secrets.yaml WiFi values can stay dummy). Uses the logger's USB_SERIAL_JTAG port.
+improv_serial:
+
+# PSRAM: confirmed by boot log 20261104 (QFN56 rev v0.2, 4MB XMC flash, 2MB quad PSRAM AP_3v3).
+# QUAD mode only - octal will fail to boot on R2 parts.
+psram:
+  mode: quad
+  speed: 80MHz
+
+# No ADC VCC on ESP32: chip temperature instead of Vdd
+sensor:
+  - platform: internal_temperature
+    name: "Chip Temp"
+    update_interval: 30s
+  - platform: debug
+    psram:
+      name: "PSRAM Free"
+
+# GPIO48 plain LED polarity: assumed active-HIGH (LED to GND, ON = 1); common/ has
+# inverted: true for the off-board LEDs, so it is overridden here. If ON/OFF look swapped,
+# set inverted: true.
+switch:
+  - id: !extend Blu_LED
+    pin:
+      number: GPIO48
+      inverted: false
+
+# End of SECTION 2
+
+
+# =====================================================================
+# SECTION 3 (ALTERNATIVE): ERB_EspWebServer_Esp32S3_SuperMini.yaml  (WS2812 on GPIO48)
+# =====================================================================
+# Authors: Grok and Eldon R. Brown - WA0UWH
+# Rev: 20261104f
 # ERB_EspWebServer for ESP32-S3 Super Mini (HW-747 V0.0.2). Shared UI + entities in common/.
 # Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
 # Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
@@ -191,6 +281,8 @@ button:
 # GPIO48 = onboard WS2812 (shared with a red LED on some boards) - left for the optional light below.
 
 substitutions:
+  Rev: "20261104f"
+  Build_Name: ERB_EspWebServer_Esp32S3_SuperMini_Ws2812_20261104f   # must equal the bin base name
   Device_Name: erb-espwebserver-s3
   Friendly_Name: ERB EspWebServer S3
   Red_Pin: GPIO4
@@ -200,10 +292,6 @@ substitutions:
 
 # packages: common -> see SECTION 1 above
 
-esphome:
-  project:
-    name: wa0uwh.erb_espwebserver
-    version: "20261104e"
 
 # Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
 # No web login right now, so anyone on the LAN could upload firmware (see auth note in common/).
@@ -263,80 +351,6 @@ switch:
       - light.turn_on: { id: Onboard_Rgb, red: 0%, green: 0%, blue: 100%, brightness: 40% }
     on_turn_off:
       - light.turn_off: Onboard_Rgb
-
-# End of SECTION 2
-
-
-# =====================================================================
-# SECTION 3 (ALTERNATIVE, not combined with 2): ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48.yaml
-# =====================================================================
-# Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104e
-# ERB_EspWebServer for ESP32-S3 Super Mini, PLAIN LED on GPIO48 variant (try if the WS2812 build stays dark). Shared UI + entities in common/.
-# Assumed chip ESP32-S3FH4R2: 4 MB flash, 2 MB QUAD PSRAM (in-package), native USB on the USB-C.
-# Specs: espboards.dev/esp32/esp32-s3-super-mini, esp32.co.uk (SuperMini/HW-747), devices.esphome.io.
-# Pins used are all on the side headers: IO4/IO5/IO6 LEDs, IO7 input (no strap/USB/flash pins).
-# GPIO48 = onboard WS2812 (shared with a red LED on some boards) - left for the optional light below.
-
-substitutions:
-  Device_Name: erb-espwebserver-s3
-  Friendly_Name: ERB EspWebServer S3
-  Red_Pin: GPIO4
-  Grn_Pin: GPIO5
-  Blu_Pin: GPIO48   # onboard plain LED; heartbeat drives it directly
-  In_Pin: GPIO7
-
-# packages: common -> see SECTION 1 above
-
-esphome:
-  project:
-    name: wa0uwh.erb_espwebserver
-    version: "20261104e"
-
-# Firmware upload from the device's own page (Admin tab, POST /update), no USB needed.
-# No web login right now, so anyone on the LAN could upload firmware (see auth note in common/).
-ota:
-  - platform: web_server
-
-esp32:
-  variant: esp32s3
-  board: esp32-s3-devkitc-1
-  flash_size: 4MB
-  framework:
-    type: esp-idf
-
-# Logs over the native USB-C port (S3 built-in USB Serial/JTAG CDC, no UART chip on this board)
-logger:
-  level: INFO
-  hardware_uart: USB_SERIAL_JTAG
-
-# Lets web.esphome.io send WiFi credentials over USB right after flashing
-# (so secrets.yaml WiFi values can stay dummy). Uses the logger's USB_SERIAL_JTAG port.
-improv_serial:
-
-# PSRAM: confirmed by boot log 20261104 (QFN56 rev v0.2, 4MB XMC flash, 2MB quad PSRAM AP_3v3).
-# QUAD mode only - octal will fail to boot on R2 parts.
-psram:
-  mode: quad
-  speed: 80MHz
-
-# No ADC VCC on ESP32: chip temperature instead of Vdd
-sensor:
-  - platform: internal_temperature
-    name: "Chip Temp"
-    update_interval: 30s
-  - platform: debug
-    psram:
-      name: "PSRAM Free"
-
-# GPIO48 plain LED polarity: assumed active-HIGH (LED to GND, ON = 1); common/ has
-# inverted: true for the off-board LEDs, so it is overridden here. If ON/OFF look swapped,
-# set inverted: true.
-switch:
-  - id: !extend Blu_LED
-    pin:
-      number: GPIO48
-      inverted: false
 
 # End of SECTION 3
 

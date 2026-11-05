@@ -1,8 +1,8 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261104d
+# Rev: 20261104f
 # ERB_Common - shared, board-independent part of the standalone ESPHome port of
 # github.com/wa0uwh/ERB-EspWebServer. No Home Assistant (no api: block).
-# Board files supply: Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
+# Board files supply: Rev, Build_Name (= the bin base name), Device_Name, Friendly_Name, Red_Pin, Grn_Pin, Blu_Pin, In_Pin,
 # plus their own esp8266:/esp32: block and board-only sensors (Vdd or Chip Temp/PSRAM).
 
 esphome:
@@ -10,7 +10,7 @@ esphome:
   friendly_name: ${Friendly_Name}
   project:
     name: wa0uwh.erb_espwebserver
-    version: "20261104d"
+    version: "${Rev}"
 
 logger:
   level: INFO
@@ -89,6 +89,24 @@ text_sensor:
       name: "MAC Address"
     scan_results:
       name: "WiFi Scan"
+  # Which firmware is loaded: Build_Name equals the bin base name, e.g.
+  # ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104f (.factory.bin / .ota.bin)
+  - platform: template
+    id: Build_Name_Text
+    name: "Build Name"
+    icon: mdi:package-variant
+    update_interval: never
+    lambda: 'return {"${Build_Name}"};'
+  # Compile date/time from the build host (box clock is Pacific), e.g. 2026-11-04 17:55:00 -0800
+  - platform: template
+    id: Build_Time_Text
+    name: "Build Time"
+    icon: mdi:clock-check-outline
+    update_interval: never
+    lambda: |-
+      char buf[esphome::Application::BUILD_TIME_STR_SIZE];
+      App.get_build_time_string(buf);
+      return {buf};
   - platform: template
     id: Clock_Text
     name: "Clock"

@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104e
+// Rev: 20261104f
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
   var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104e';
+  var Rev = '20261104f';
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
     '.Nav{width:100%;border-collapse:collapse}.Nav td{padding:2px}.Nav a{color:#00e;cursor:pointer;text-decoration:underline}' +
@@ -87,7 +87,7 @@
         '<br>Input 1 is <b id="v_binary_sensor_Input_1">' + Esc(V('binary_sensor/Input 1')) + '</b></div>';
     },
     info: function () {
-      return '<pre>' + Row('Version', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
+      return '<pre>' + Row('Build Name', 'text_sensor/Build Name') + Row('Build Time', 'text_sensor/Build Time') + Row('ESPHome', 'text_sensor/ESPHome Version') + Row('UI Rev', 'x/rev') + Row('Uptime', 'sensor/Uptime') +
         Row('Reset Reason', 'text_sensor/Reset Reason') + Row('Device', 'text_sensor/Device Info') +
         Row('IP Address', 'text_sensor/IP Address') + Row('SSID', 'text_sensor/Connected SSID') + Row('BSSID', 'text_sensor/Connected BSSID') +
         Row('RSSI', 'sensor/WiFi Signal') + Row('MAC', 'text_sensor/MAC Address') + Row('Free Heap', 'sensor/Free Heap') +
@@ -100,7 +100,7 @@
       return '<div class="Ctr"><b>Admin</b><br><button data-act="button/Restart/press" data-q="Reboot the device?">Reboot</button>' +
         '<button data-act="button/Restart (Safe Mode)/press" data-q="Reboot into Safe Mode (OTA only)?">Safe Mode</button></div>' +
         '<pre><b>WiFi Scan</b>\n<span id="v_text_sensor_WiFi_Scan">' + Esc(V('text_sensor/WiFi Scan')) + '</span></pre>' +
-        '<form id="otaF"><b>Firmware update</b> (.ota.bin): <input type="file" id="otaFile" accept=".bin"> <button type="submit">Upload</button> <span id="otaMsg"></span></form>' +
+        '<form id="otaF"><b>Firmware update</b> (.ota.bin): <input type="file" id="otaFile" accept=".bin"> <button type="submit">Upload</button><br>Chosen: <b id="otaName">none</b> <span id="otaMsg"></span><br>Running: <b>' + Esc(V('text_sensor/Build Name')) + '</b></form>' +
         '<p>To change networks: if the device cannot join its WiFi it starts hotspot <b>ERB-EspWebServer-Setup</b>. Join it and a captive portal page lets you pick a new network.</p>';
     },
     help: function () {
@@ -169,12 +169,18 @@
   });
   document.addEventListener('submit', function (ev) {
     if (ev.target.id != 'otaF') return; ev.preventDefault();
-    var f = $('otaFile').files[0]; if (!f || !confirm('Upload ' + f.name + ' and reboot?')) return;
+    var f = $('otaFile').files[0]; if (!f) return;
+    var run = V('text_sensor/Build Name'), want = Board(f.name), have = Board(run);
+    if (run != '--' && want != have && !confirm('WARNING: board/variant mismatch!\n  File:    ' + want + '\n  Running: ' + have + '\nUpload anyway?')) return;
+    if (!confirm('Upload ' + f.name + ' and reboot?')) return;
     var fd = new FormData(); fd.append('update', f, f.name); $('otaMsg').textContent = 'uploading...';
     fetch('/update', { method: 'POST', body: fd }).then(function (r) { return r.text().then(function (t) {
       $('otaMsg').textContent = r.ok ? 'done, rebooting: ' + t : 'failed (' + r.status + ') - this board may not have web OTA'; }); })
       .catch(function () { $('otaMsg').textContent = 'upload failed'; });
   });
+  // Board/variant part of a build name: drop folder, .factory/.ota.bin and the _YYYYMMDDx rev
+  function Board(n) { return String(n).split(/[\\/]/).pop().replace(/(\.factory|\.ota)?\.bin$/i, '').replace(/ ?\(\d+\)$/, '').replace(/_\d{8}[a-z]?$/, ''); }
+  document.addEventListener('change', function (ev) { if (ev.target.id == 'otaFile') { var f = ev.target.files[0]; $('otaName').textContent = f ? f.name : 'none'; } });
   document.addEventListener('change', function (ev) { if (ev.target.id == 'hMin') { Hist_Min = +ev.target.value; DrawLine(); } });
 
   function OnState(ev) {
