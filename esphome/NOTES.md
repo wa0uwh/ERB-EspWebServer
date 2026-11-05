@@ -125,3 +125,7 @@
 - Removed both bottom sparklines (browser + device long trend) and their labels; footer now: "WA0UWH - ERB-EspWebServer" / "Firmware <Build Name> | Rev <Rev> | Built <Build Time> | Up d hh:mm:ss" (Heap dropped). Top numeric, gauges, center graph unchanged. erb_heap_log + GET /heap_history.csv + Admin "Clear heap history" KEPT.
 - Mock_Server: Build Name/Time now '' unless MOCK_BUILD_TS!=0; ping comment unless MOCK_COMMENT=0. Checked 3 modes: 0/0 reproduces rev l '--'; 0/1 fallback shows name; 1/1 all shown. No JS errors. screens/PlainLed48/ refreshed (1/1 mode).
 - Log flash/Build_20261104m.log: 0 warnings. RAM 108,067 B (31.6%), Flash 869,655 B (47.4%). Bins (600): _20261104m.factory.bin 935312 B, .ota.bin 869776 B. First 64 KB == l, app == ota. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.
+
+## 2026-11-04 8:40 PM PST - Rev 20261104n: footer drops repeated firmware name
+- Eldon confirmed rev m on hardware (Home firmware line + footer show real values). Per his marked screenshot: footer second line now "Rev <Rev> | Built <Build Time> | Up d hh:mm:ss" (removed "Firmware <Build Name> |"); "WA0UWH - ERB-EspWebServer" kept. Home "Firmware: <name>.factory.bin / .ota.bin" line unchanged. Nothing else changed.
+- Mock checked (no JS errors), screens/PlainLed48/ refreshed. Log flash/Build_20261104n.log: 0 warnings. Bins (600): _20261104n.factory.bin 935296 B, .ota.bin 869760 B. First 64 KB == m. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.
