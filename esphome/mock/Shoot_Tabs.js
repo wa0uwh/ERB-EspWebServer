@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261106p
+// Rev: 20261106a
 // Shoot_Tabs - headless screenshots of each ERB UI tab against Mock_Server.js.
 const puppeteer = require('/workspace/repos/grok-voice-reader-extension/chrome-extension/node_modules/puppeteer-core');
 const Out = require('path').join(__dirname, '..', 'screens') + (process.env.MOCK_NO_LEDS ? '/PlainLed48' : '');
@@ -26,7 +26,7 @@ require('fs').mkdirSync(Out, { recursive: true });
   await p.click(`[data-pg="home"]`); await p.click('[data-led="Heartbeat"]'); await new Promise(r => setTimeout(r, 500));
   await p.click(`[data-pg="admin"]`);
   const Dlg = []; p.on('dialog', d => Dlg.push(d.message().split('\n')[0]));
-  const Fw = '/tmp/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261106p.ota.bin'; require('fs').writeFileSync(Fw, Buffer.alloc(4096, 7));
+  const Fw = '/tmp/ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261106a.ota.bin'; require('fs').writeFileSync(Fw, Buffer.alloc(4096, 7));
   await (await p.$('#otaFile')).uploadFile(Fw);
   console.log('CHOSEN', await p.$eval('#otaName', e => e.textContent));
   await p.click('#otaF button'); await new Promise(r => setTimeout(r, 1000));

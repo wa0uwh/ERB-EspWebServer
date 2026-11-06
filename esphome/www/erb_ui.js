@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261106p
+// Rev: 20261106a
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
   var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261106p';
+  var Rev = '20261106a';
   var Cmt = '';   // esphome comment (= Build_Name) from the /events ping config: fallback if Build Name state is empty
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +

@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261106p
+// Rev: 20261106a
 // erb_boot_slot - "app0 (USB/factory)" / "app1 (OTA)" etc. for the Boot Slot text_sensor (ESP32 only).
 // Method (rev p): read the two raw otadata entries (otadata partition, 0x9000 and 0xA000, 32 B each) and do
 // what the IDF bootloader does: the ACTIVE entry is the CRC-valid one (crc == crc32_le(~0, ota_seq, 4), seq != ~0)

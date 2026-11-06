@@ -1,5 +1,5 @@
 # Authors: Grok and Eldon R. Brown - WA0UWH
-# Rev: 20261106p
+# Rev: 20261106a
 # Boot Slot readout (ESP32 only, not NodeMCU): running app partition + how it got there (active raw otadata entry; factory.bin carries an ERBUSB sentinel), see erb_boot_slot.h.
 esphome:
   includes:

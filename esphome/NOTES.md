@@ -154,3 +154,6 @@
 - Help tab: "(USB/factory) = factory .bin written over USB at 0x0 (its ERBUSB mark clears old OTA records)". Limit kept: only an .ota.bin written over USB at 0x10000 after an OTA still reads as OTA.
 - Log flash/Build_20261106p.log: 0 warnings. RAM 108,155 B (31.6%), Flash 870,511 B (47.4%). Bins (600): _20261106p.factory.bin 936,160 B, .ota.bin 870,624 B. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last. Mock checked, no JS errors, screens/PlainLed48/ refreshed.
 - Eldon flashes the factory.bin over USB at 0x0 himself; nothing was flashed from here.
+
+## 2026-11-06 7:18 AM PST - Rev 20261106p retitled 20261106a
+- The rev letter restarts each calendar day, so the 20261106p Boot Slot fix is now 20261106a. Code is unchanged except the rev strings. 0 warnings, RAM 108,155 B (31.6%), Flash 870,511 B (47.4%). Bins (600): _20261106a.factory.bin 936,160 B (ERBUSB at 0x9000/0xA000, first 64 KB == p), .ota.bin 870,624 B (no sentinel). The p bins stay in flash/ as history; flash the a factory.bin at 0x0.
