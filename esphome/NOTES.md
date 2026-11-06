@@ -140,3 +140,17 @@
 - Limits: writing only the .ota.bin over USB at 0x10000 (no otadata rewrite) after an earlier OTA is reported as OTA (and the bootloader may still boot the other slot). erase_flash, then factory = USB/factory. Help tab explains app0/app1.
 - UI: footer "Rev | Built | Slot <value> | Up"; Info row "Boot Slot" (shown when the device sends it). Mock: MOCK_SLOT (default "app0 (USB/factory)"), checked "app1 (OTA)" and "app0 (USB/factory)", no JS errors; screens/PlainLed48/ refreshed (USB/factory).
 - Log flash/Build_20261104o.log: 0 warnings. Bins (600): _20261104o.factory.bin 935936 B, .ota.bin 870400 B. First 64 KB == n. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last.
+
+## 2026-11-04 9:26 PM PST - Rev o Boot Slot bug (for later)
+- Eldon: did USB, then OTA, then USB, then USB. The Info tab still shows "Boot Slot: app0 (OTA)" after the USB flashes. The readout did not change.
+- Suspect: the USB flash tool is not overwriting otadata (0x9000-0xAFFF), so an old valid OTA record stays. Check how he flashes (web.esphome.io vs esptool), and whether the factory.bin really carries 0xFF there. A fix may be to clear otadata on OTA-less boots, or to use a different signal.
+- On hold until Eldon is back.
+
+## 2026-11-06 7:12 AM PST - Rev 20261106p: Boot Slot fix (USB/factory vs OTA)
+- Root cause of rev o "app0 (OTA)" after every USB flash: the factory.bin blanks otadata (0x9000-0xAFFF = 0xFF), but on the first boot the IDF 5.5.6 bootloader itself writes otadata[0] = {seq 1, VALID} for app0 (bootloader_utility.c set_actual_ota_seq, no factory partition). esp_ota_get_state_partition(app0) then returns ESP_OK, so rev o always said OTA. It also returned ESP_OK for any CRC-valid leftover entry (INVALID/ABORTED state, or not the active one).
+- Fix (common/erb_boot_slot.h): read both raw otadata entries, pick the active one like the bootloader (CRC-valid, seq != ~0, state not INVALID/ABORTED, highest seq). "(OTA)" only if it selects the running slot AND seq >= 2 (an OTA never writes seq 1: esp_ota_set_boot_partition picks a seq above the current max, first OTA = seq 2 in app1). Else "(USB/factory)". Display strings unchanged: "app0 (USB/factory)", "app1 (OTA)", "app0 (OTA)".
+- factory.bin post-processed (ota.bin untouched): 32-byte sentinel "ERBUSB"+26 zeros at 0x9000 and 0xA000 (ota_seq 0x55425245, crc 0 = CRC-invalid -> bootloader ignores it, boots app0, writes its seq-1 entry over sector 0). Not 0xFF, so even a flasher that skips 0xFF pages overwrites old OTA records. First 64 KB vs rev o: 64 bytes differ, all in those two sentinel spots. App (0x10000..) == ota.bin. Sentinel absent from ota.bin.
+- No NVS flag (survives USB), no otadata wipe on any reset reason, no ESP_RST_USB self-heal (USB-Serial-JTAG resets also come from opening a serial monitor; not worth the risk).
+- Help tab: "(USB/factory) = factory .bin written over USB at 0x0 (its ERBUSB mark clears old OTA records)". Limit kept: only an .ota.bin written over USB at 0x10000 after an OTA still reads as OTA.
+- Log flash/Build_20261106p.log: 0 warnings. RAM 108,155 B (31.6%), Flash 870,511 B (47.4%). Bins (600): _20261106p.factory.bin 936,160 B, .ota.bin 870,624 B. Credentials baked in. NodeMCU + S3 base compile OK (no bins). PlainLed48 compiled last. Mock checked, no JS errors, screens/PlainLed48/ refreshed.
+- Eldon flashes the factory.bin over USB at 0x0 himself; nothing was flashed from here.

@@ -1,5 +1,5 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104o
+// Rev: 20261106p
 // Mock_Server - fakes the ESPHome v3 web_server (index, /0.js, /events SSE, POST actions)
 // (basic auth guest:grest only when MOCK_AUTH=1) so www/erb_ui.js can be tested in a browser. Usage: node Mock_Server.js [port]
 const http = require('http'), fs = require('fs'), path = require('path');
@@ -7,7 +7,7 @@ const Port = +process.argv[2] || 8099;
 const JS = path.join(__dirname, '..', 'www', 'erb_ui.js');
 // 20261104o: match the real device. Build Name/Time are ''-state unless the firmware publishes them
 // (rev l and older: never published -> MOCK_BUILD_TS=0). ping carries esphome comment = Build_Name (rev m+; MOCK_COMMENT=0 = rev l).
-const BuildName = process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261104o' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261104o';
+const BuildName = process.env.MOCK_NO_LEDS ? 'ERB_EspWebServer_Esp32S3_SuperMini_PlainLed48_20261106p' : 'ERB_EspWebServer_Esp8266_NodeMcu_20261106p';
 const Pub = process.env.MOCK_BUILD_TS !== '0', Cmt = process.env.MOCK_COMMENT !== '0' ? BuildName : '';
 const S = {
   'sensor/Free Heap': [23456, '23456 B'], 'sensor/Vdd': [3.29, '3.29 V'], 'sensor/WiFi Signal': [-61, '-61 dBm'],

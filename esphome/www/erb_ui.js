@@ -1,11 +1,11 @@
 // Authors: Grok and Eldon R. Brown - WA0UWH
-// Rev: 20261104o
+// Rev: 20261106p
 // ERB_UI - custom multi-page UI for the standalone ESPHome ERB-EspWebServer.
 // Recreates the 2015 Home / Help / Admin / Info pages + Navigator, from flash, no internet.
 // Data: /events SSE ("state" events, id = "<domain>/<Entity Name>"); actions: REST POST.
 (function () {
   var Hist_Min = 30, Hist = [], S = {}, Page = 'home', Hits = 0;
-  var Rev = '20261104o';
+  var Rev = '20261106p';
   var Cmt = '';   // esphome comment (= Build_Name) from the /events ping config: fallback if Build Name state is empty
   var css = 'body{background:#ddddee;font-family:Times New Roman,serif;margin:8px;color:#000}' +
     'h1{text-align:center;margin:4px}h1 small{font-size:13px;font-weight:normal;display:block}' +
@@ -113,7 +113,7 @@
         '<b>REST (like the old /t/redled, /q/... links):</b>\n  POST /switch/Red LED/toggle     = Toggle Red Led\n  POST /switch/Red LED/turn_on    = Turn Red Led ON\n' +
         '  POST /switch/Red LED/turn_off   = Turn Red Led OFF\n  GET  /sensor/Free Heap          = Free Heap (JSON)\n  GET  /text_sensor/IP Address    = IP (JSON)\n' +
         '  GET  /events                    = Live event stream\n\nAll pages update live; no refresh or slider needed.\n' +
-        '<b>Boot Slot</b> (ESP32): app0/app1 = flash slot running now.\n  (USB/factory) = factory .bin written over USB at 0x0 (it blanks otadata)\n  (OTA)         = got there by an OTA upload; a 2nd OTA lands back in app0\n  Writing only an .ota.bin over USB (at 0x10000) is NOT detected as USB.\n\n' +
+        '<b>Boot Slot</b> (ESP32): app0/app1 = flash slot running now.\n  (USB/factory) = factory .bin written over USB at 0x0 (its ERBUSB mark clears old OTA records)\n  (OTA)         = got there by an OTA upload; a 2nd OTA lands back in app0\n  Writing only an .ota.bin over USB (at 0x10000) is NOT detected as USB.\n\n' +
         'mDNS name: <b>' + Esc(location.hostname) + '</b></pre>';
     },
     all: function () {
