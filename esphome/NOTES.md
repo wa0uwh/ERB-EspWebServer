@@ -36,7 +36,7 @@
 - flash/: ..._Ws2812_20261104e and ..._PlainLed48_20261104e factory + ota bins, Rev_20261104e.txt, ERB_S3_SuperMini_Full_20261104e.yaml.
 
 ## 2026-11-04 03:25 PM PST - Rev 20261104d (web login removed)
-- Eldon tried guest/guest (we had guest/grest) and asked to remove the login for now. The web_server auth block is commented out in common/ with a re-enable note. The docs no longer mention a login. secrets.yaml.example web_password is now a placeholder.
+- Eldon tried the example username with a password equal to that username (the build had a different example password) and asked to remove the login for now. The web_server auth block is commented out in common/ with a re-enable note. The docs no longer mention a login. secrets.yaml.example web_password is now a placeholder.
 - Mock: auth only when MOCK_AUTH=1. Re-test without auth: LED, Heartbeat, Reboot, upload and /events all OK, no JS errors.
 - Compile: S3 RAM 107,427 B (31.4%), Flash 866,331 B (47.2%). Esp8266 RAM 34,272 B (41.8%), Flash 410,881 B (39.3%).
 - flash/: 20261104d factory + ota bins, Rev_20261104d.txt, ERB_S3_SuperMini_Full_20261104d.yaml.
@@ -48,7 +48,7 @@
 - Heartbeat changed to Eldon's pattern: no WiFi = 1 s on / 1 s off; WiFi = 80/80/80 ms in a 2 s cycle.
 
 ## 2026-11-04 03:10 PM PST - Rev 20261104c
-- Web auth is back on, user guest / password grest (Eldon: example project, OK in secrets.yaml.example + docs). It covers the page, /events, REST POSTs and /update.
+- Web auth is back on for the example account (username and password are the example values kept in secrets.yaml.example and the docs; Eldon: example project, OK). It covers the page, /events, REST POSTs and /update.
 - Mock: Mock_Server.js now enforces basic auth (401 without it). Shoot_Tabs.js logs in, and these all passed through auth: LED toggle, Heartbeat toggle, Reboot POST, the OTA upload (multipart /update) and the SSE stream. No-auth /events -> 401.
 - Heartbeat template switch (RESTORE_DEFAULT_ON) + 2 s interval in common/ drives the Blue LED. Before WiFi it blinks 1 s on / 1 s off. With wifi.connected it does 80 on / 80 off / 80 on, then off. Switching it off turns Blue off and gives manual control back. Heartbeat button on Home.
 - Compile: S3 RAM 107,435 B (31.4%), Flash 867,563 B (47.3%). Esp8266 RAM 34,468 B (42.1%), Flash 414,437 B (39.7%).
@@ -157,3 +157,7 @@
 
 ## 2026-11-06 7:18 AM PST - Rev 20261106p retitled 20261106a
 - The rev letter restarts each calendar day, so the 20261106p Boot Slot fix is now 20261106a. Code is unchanged except the rev strings. 0 warnings, RAM 108,155 B (31.6%), Flash 870,511 B (47.4%). Bins (600): _20261106a.factory.bin 936,160 B (ERBUSB at 0x9000/0xA000, first 64 KB == p), .ota.bin 870,624 B (no sentinel). The p bins stay in flash/ as history; flash the a factory.bin at 0x0.
+
+## 2026-11-06 - Rev 20261106a confirmed on the board
+- Eldon confirmed Rev 20261106a on the board for USB and OTA on 6 Nov 2026.
+- Credential-bearing binaries remain unpublished.

@@ -1,6 +1,8 @@
 ERB-EspWebServer
 ================
 
+Public access notes: [docs/public-access/00-index.md](docs/public-access/00-index.md)
+
     /*
      * This Program Provides the following for the Esp8266 as a WebServer:
      * But CAUTION, some functionallity may not have been throughly tested.
